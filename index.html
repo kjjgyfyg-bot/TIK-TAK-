@@ -1,165 +1,333 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TIK TK | Save Your Day</title>
-  <meta name="description" content="لعبة تفاعلية لتعلم مهارات إدارة الوقت بطريقة ممتعة">
+  <meta name="theme-color" content="#17152b">
+  <title>TIK TK | Beat the Clock</title>
+  <meta name="description" content="Five missions. Twenty-four hours. Can you beat the clock and make better time choices?">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
 
-  <div class="background-glow"></div>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <div class="ambient ambient-three"></div>
+  <div id="floating-hours" aria-hidden="true"></div>
 
   <header class="topbar">
-    <a class="logo" href="#" onclick="goHome();return false;">
-      <span class="logo-icon">⏳</span> TIK TK
+    <a class="brand" href="#" onclick="goHome();return false;">
+      <span class="brand-icon">⏱</span>
+      <span>TIK <span class="brand-accent">TK</span></span>
     </a>
-    <span class="top-label">THE 24H CHALLENGE</span>
+
+    <button id="sound-toggle" class="sound-toggle" aria-label="Toggle sound">
+      <span id="sound-icon">♫</span>
+      <span id="sound-label">SOUND ON</span>
+    </button>
   </header>
 
-  <main id="app">
+  <main class="main-container">
 
     <!-- HOME -->
-    <section id="home" class="screen active">
-      <div class="hero">
-        <div class="hero-art">
-          <div class="clock-orbit">
-            <span class="clock">⏰</span>
-          </div>
-          <div class="floating-chip chip-one">FOCUS</div>
-          <div class="floating-chip chip-two">PLAN</div>
-          <div class="floating-chip chip-three">BALANCE</div>
-        </div>
+    <section id="home-screen" class="screen active">
+      <div class="home-layout">
 
         <div class="hero-content">
-          <span class="eyebrow">YOUR TIME. YOUR CHOICE.</span>
-          <h1>CAN YOU<br><span>SAVE YOUR DAY?</span></h1>
-          <p>
-            24 ساعة، 5 تحديات، وقرارات كتير!
-            مستعد تكتشف إزاي تسيطر على يومك
-            بدل ما يومك هو اللي يسيطر عليك؟
+          <div class="eyebrow">
+            <span class="pulse-dot"></span>
+            YOUR TIME. YOUR CHOICES.
+          </div>
+
+          <h1 class="hero-title">
+            CAN YOU<br>
+            <span class="gradient-text">SAVE YOUR</span><br>
+            DAY?
+          </h1>
+
+          <p class="hero-description">
+            5 missions. 24 hours. Your choices.
+            Make every minute count!
           </p>
-          <button class="primary-btn" onclick="startGame()">
-            ابدأ التحدي <span>←</span>
-          </button>
-          <button class="secondary-btn" onclick="showIntro()">
-            إزاي ألعب؟
-          </button>
+
+          <div class="hero-buttons">
+            <button class="primary-button" onclick="startGame()">
+              LET'S PLAY <span>→</span>
+            </button>
+
+            <button class="secondary-button" onclick="showScreen('intro-screen')">
+              HOW TO PLAY <span>?</span>
+            </button>
+          </div>
+
+          <div class="hero-tags">
+            <span>⚡ 5 MISSIONS</span>
+            <span>🎯 100 POINTS</span>
+            <span>⏰ 24 HOURS</span>
+          </div>
         </div>
+
+        <div class="clock-stage">
+          <div class="orbit orbit-one"></div>
+          <div class="orbit orbit-two"></div>
+
+          <div class="clock-card">
+            <div class="clock-top">
+              <span>TIME IS YOUR POWER</span>
+              <span class="clock-live">● LIVE</span>
+            </div>
+
+            <div class="clock-face">
+              <div class="clock-hand hand-hour"></div>
+              <div class="clock-hand hand-minute"></div>
+              <div class="clock-center"></div>
+
+              <span class="clock-number n12">12</span>
+              <span class="clock-number n3">3</span>
+              <span class="clock-number n6">6</span>
+              <span class="clock-number n9">9</span>
+            </div>
+
+            <div class="clock-bottom">
+              <span class="clock-big">24<span>H</span></span>
+              <span class="clock-sub">MAKE IT COUNT</span>
+            </div>
+          </div>
+
+          <div class="floating-bubble bubble-one">⚡</div>
+          <div class="floating-bubble bubble-two">🎯</div>
+          <div class="floating-bubble bubble-three">🚀</div>
+          <div class="floating-bubble bubble-four">✨</div>
+        </div>
+
       </div>
 
-      <div class="mission-preview">
-        <div class="preview-title">
-          <span>YOUR MISSIONS</span>
-          <span>01 — 05</span>
+      <div class="home-bottom">
+        <div class="mini-mission">
+          <span class="mini-icon">🔎</span>
+          <div>
+            <strong>DETECT</strong>
+            <small>Find your time</small>
+          </div>
         </div>
-        <div class="mission-strip">
-          <div class="mini-mission"><span>🔎</span><small>اكتشف</small></div>
-          <div class="mini-mission"><span>🎯</span><small>أولويات</small></div>
-          <div class="mini-mission"><span>🧩</span><small>خطط</small></div>
-          <div class="mini-mission"><span>🛡️</span><small>ركز</small></div>
-          <div class="mini-mission"><span>⚖️</span><small>وازن</small></div>
+
+        <div class="mini-mission">
+          <span class="mini-icon">🎯</span>
+          <div>
+            <strong>PRIORITIZE</strong>
+            <small>Choose wisely</small>
+          </div>
+        </div>
+
+        <div class="mini-mission">
+          <span class="mini-icon">🧩</span>
+          <div>
+            <strong>PLAN</strong>
+            <small>Build your plan</small>
+          </div>
+        </div>
+
+        <div class="mini-mission">
+          <span class="mini-icon">🛡️</span>
+          <div>
+            <strong>FOCUS</strong>
+            <small>Protect your time</small>
+          </div>
+        </div>
+
+        <div class="mini-mission">
+          <span class="mini-icon">⚖️</span>
+          <div>
+            <strong>BALANCE</strong>
+            <small>Save your day</small>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- INTRO -->
-    <section id="intro" class="screen">
-      <div class="panel intro-panel">
-        <span class="eyebrow">WELCOME TO TIK TK</span>
-        <h2>رحلتك لإنقاذ يومك بتبدأ هنا!</h2>
-        <p>
-          هتواجه 5 تحديات تساعدك تكتشف وقتك،
-          وتحدد أولوياتك، وتخطط، وتركز،
-          وتوازن بين مسؤولياتك وراحتك.
+    <section id="intro-screen" class="screen">
+      <div class="intro-card">
+        <div class="intro-emoji">⏳</div>
+
+        <div class="eyebrow centered">
+          <span class="pulse-dot"></span>
+          THE 24H CHALLENGE
+        </div>
+
+        <h2 class="section-title">
+          YOUR MISSION<br>
+          <span class="gradient-text">STARTS NOW!</span>
+        </h2>
+
+        <p class="intro-description">
+          Every day has 24 hours. The secret isn't doing everything.
+          It's making the right choices!
         </p>
 
-        <div class="video-container">
-          <!-- ضعي رابط فيديو YouTube هنا إذا توفر -->
-          <div class="video-placeholder">
-            <span>▶</span>
-            <p>رحلتك بتبدأ من هنا</p>
-            <small>قريبًا: فيديو تعريفي</small>
+        <div class="rules-grid">
+          <div class="rule-card">
+            <span>🎮</span>
+            <strong>5 MISSIONS</strong>
+            <p>Face five everyday time challenges.</p>
+          </div>
+
+          <div class="rule-card">
+            <span>🧠</span>
+            <strong>MAKE A CHOICE</strong>
+            <p>Pick the smartest decision.</p>
+          </div>
+
+          <div class="rule-card">
+            <span>⭐</span>
+            <strong>EARN POINTS</strong>
+            <p>Collect up to 100 points.</p>
+          </div>
+
+          <div class="rule-card">
+            <span>💡</span>
+            <strong>LEARN & GROW</strong>
+            <p>Get feedback after each choice.</p>
           </div>
         </div>
 
-        <div class="rules">
-          <div>✨ كل تحدي يعلمك مهارة.</div>
-          <div>🧠 اختياراتك بتكشف طرق مختلفة للتعامل مع الوقت.</div>
-          <div>💡 مفيش يوم مثالي، المهم تتعلم وتبدأ.</div>
+        <div class="scoring-guide">
+          <div class="score-item">
+            <span class="score-dot green"></span>
+            <strong>20</strong>
+            <span>Best choice</span>
+          </div>
+
+          <div class="score-item">
+            <span class="score-dot yellow"></span>
+            <strong>5</strong>
+            <span>Partial choice</span>
+          </div>
+
+          <div class="score-item">
+            <span class="score-dot red"></span>
+            <strong>0</strong>
+            <span>Try again</span>
+          </div>
         </div>
 
-        <button class="primary-btn" onclick="startGame()">يلا نبدأ! ←</button>
-        <button class="secondary-btn" onclick="goHome()">رجوع</button>
+        <button class="primary-button full-button" onclick="startGame()">
+          START THE CHALLENGE <span>→</span>
+        </button>
+
+        <button class="text-button" onclick="goHome()">
+          ← BACK TO HOME
+        </button>
       </div>
     </section>
 
     <!-- GAME -->
-    <section id="game" class="screen">
-      <div class="game-header">
-        <div>
-          <span class="eyebrow" id="mission-number">MISSION 01</span>
-          <h2 id="mission-title">المهمة</h2>
-        </div>
-        <div class="score-circle">
-          <span id="score">0</span>
-          <small>POINTS</small>
-        </div>
-      </div>
+    <section id="game-screen" class="screen">
+      <div class="game-card">
 
-      <div class="progress-track">
-        <div id="progress-bar"></div>
-      </div>
+        <div class="game-topline">
+          <div class="mission-label">
+            <span id="mission-number">MISSION 01</span>
+            <span class="mission-separator">/</span>
+            <span>05</span>
+          </div>
 
-      <div class="panel game-panel">
-        <div class="mission-emoji" id="mission-emoji">🔎</div>
-        <h3 id="question"></h3>
-        <p id="question-description"></p>
-        <div id="choices" class="choices"></div>
-        <div id="feedback" class="feedback hidden"></div>
-        <button id="next-btn" class="primary-btn hidden" onclick="nextMission()">
-          المهمة التالية ←
+          <div class="score-pill">
+            ⭐ <span id="score">0</span>
+          </div>
+        </div>
+
+        <div class="progress-track">
+          <div id="progress-bar" class="progress-fill"></div>
+        </div>
+
+        <div class="mission-heading">
+          <div id="mission-emoji" class="mission-emoji">🔎</div>
+          <h2 id="mission-title">TIME DETECTIVE</h2>
+        </div>
+
+        <p id="mission-description" class="mission-description"></p>
+
+        <h3 id="question" class="question-text"></h3>
+
+        <div id="choices" class="choices-container"></div>
+
+        <div id="feedback" class="feedback hidden">
+          <div id="feedback-icon" class="feedback-icon"></div>
+          <div>
+            <h4 id="feedback-title"></h4>
+            <p id="feedback-text"></p>
+          </div>
+        </div>
+
+        <button id="next-button" class="primary-button full-button hidden" onclick="nextMission()">
+          NEXT MISSION <span>→</span>
         </button>
-      </div>
 
-      <button class="exit-btn" onclick="goHome()">العودة للرئيسية</button>
+        <div class="game-footer">
+          <span>⚡ THINK BEFORE YOU CLICK</span>
+          <span id="mission-count-footer">1 / 5</span>
+        </div>
+      </div>
     </section>
 
     <!-- RESULT -->
-    <section id="result" class="screen">
-      <div class="panel result-panel">
-        <div class="result-emoji">🏆</div>
-        <span class="eyebrow">CHALLENGE COMPLETED</span>
-        <h1>أنقذت يومك!</h1>
-        <p id="result-message"></p>
+    <section id="result-screen" class="screen">
+      <div class="result-card">
+        <div id="result-emoji" class="result-emoji">🏆</div>
 
-        <div class="final-score">
-          <span id="final-score">0</span>
-          <small>POINTS</small>
+        <div class="eyebrow centered">
+          CHALLENGE COMPLETE
         </div>
 
-        <div id="badges" class="badges"></div>
+        <h2 id="result-title" class="result-title">
+          TIME MASTER!
+        </h2>
+
+        <div class="score-circle">
+          <div class="score-circle-inner">
+            <span id="final-score">0</span>
+            <small>OUT OF 100</small>
+          </div>
+        </div>
+
+        <div id="result-badge" class="result-badge">
+          🏆 TIME MASTER
+        </div>
+
+        <p id="result-message" class="result-message"></p>
 
         <div class="takeaway">
-          <h3>خد بالك من دي 👀</h3>
-          <p>
-            إدارة الوقت مش إنك تعمل كل حاجة،
-            لكن إنك تختار اللي مهم،
-            وتبدأ، وتدي لنفسك وقت للراحة.
-          </p>
+          <span>💡</span>
+          <div>
+            <strong>YOUR TIME, YOUR POWER!</strong>
+            <p>
+              Time management isn't about filling every minute.
+              It's about making time for what truly matters.
+            </p>
+          </div>
         </div>
 
-        <button class="primary-btn" onclick="restartGame()">العب تاني ↻</button>
-        <button class="secondary-btn" onclick="goHome()">الرئيسية</button>
+        <button class="primary-button full-button" onclick="restartGame()">
+          PLAY AGAIN <span>↻</span>
+        </button>
+
+        <button class="secondary-button full-button" onclick="goHome()">
+          BACK TO HOME
+        </button>
       </div>
     </section>
 
   </main>
 
-  <footer>
-    <p>TIK TK | وقتك قرار</p>
-    <p>Made to help you make every moment count.</p>
+  <div id="confetti-container" aria-hidden="true"></div>
+
+  <footer class="site-footer">
+    <span>TIK TK</span>
+    <span>BEAT THE CLOCK. OWN YOUR DAY.</span>
   </footer>
 
   <script src="script.js"></script>
