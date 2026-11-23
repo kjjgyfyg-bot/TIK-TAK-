@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TIK TK | Save Your Day</title>
+  <meta name="description" content="لعبة تفاعلية لتعلم مهارات إدارة الوقت بطريقة ممتعة">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="background-glow"></div>
+
+  <header class="topbar">
+    <a class="logo" href="#" onclick="goHome();return false;">
+      <span class="logo-icon">⏳</span> TIK TK
+    </a>
+    <span class="top-label">THE 24H CHALLENGE</span>
+  </header>
+
+  <main id="app">
+
+    <!-- HOME -->
+    <section id="home" class="screen active">
+      <div class="hero">
+        <div class="hero-art">
+          <div class="clock-orbit">
+            <span class="clock">⏰</span>
+          </div>
+          <div class="floating-chip chip-one">FOCUS</div>
+          <div class="floating-chip chip-two">PLAN</div>
+          <div class="floating-chip chip-three">BALANCE</div>
+        </div>
+
+        <div class="hero-content">
+          <span class="eyebrow">YOUR TIME. YOUR CHOICE.</span>
+          <h1>CAN YOU<br><span>SAVE YOUR DAY?</span></h1>
+          <p>
+            24 ساعة، 5 تحديات، وقرارات كتير!
+            مستعد تكتشف إزاي تسيطر على يومك
+            بدل ما يومك هو اللي يسيطر عليك؟
+          </p>
+          <button class="primary-btn" onclick="startGame()">
+            ابدأ التحدي <span>←</span>
+          </button>
+          <button class="secondary-btn" onclick="showIntro()">
+            إزاي ألعب؟
+          </button>
+        </div>
+      </div>
+
+      <div class="mission-preview">
+        <div class="preview-title">
+          <span>YOUR MISSIONS</span>
+          <span>01 — 05</span>
+        </div>
+        <div class="mission-strip">
+          <div class="mini-mission"><span>🔎</span><small>اكتشف</small></div>
+          <div class="mini-mission"><span>🎯</span><small>أولويات</small></div>
+          <div class="mini-mission"><span>🧩</span><small>خطط</small></div>
+          <div class="mini-mission"><span>🛡️</span><small>ركز</small></div>
+          <div class="mini-mission"><span>⚖️</span><small>وازن</small></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INTRO -->
+    <section id="intro" class="screen">
+      <div class="panel intro-panel">
+        <span class="eyebrow">WELCOME TO TIK TK</span>
+        <h2>رحلتك لإنقاذ يومك بتبدأ هنا!</h2>
+        <p>
+          هتواجه 5 تحديات تساعدك تكتشف وقتك،
+          وتحدد أولوياتك، وتخطط، وتركز،
+          وتوازن بين مسؤولياتك وراحتك.
+        </p>
+
+        <div class="video-container">
+          <!-- ضعي رابط فيديو YouTube هنا إذا توفر -->
+          <div class="video-placeholder">
+            <span>▶</span>
+            <p>رحلتك بتبدأ من هنا</p>
+            <small>قريبًا: فيديو تعريفي</small>
+          </div>
+        </div>
+
+        <div class="rules">
+          <div>✨ كل تحدي يعلمك مهارة.</div>
+          <div>🧠 اختياراتك بتكشف طرق مختلفة للتعامل مع الوقت.</div>
+          <div>💡 مفيش يوم مثالي، المهم تتعلم وتبدأ.</div>
+        </div>
+
+        <button class="primary-btn" onclick="startGame()">يلا نبدأ! ←</button>
+        <button class="secondary-btn" onclick="goHome()">رجوع</button>
+      </div>
+    </section>
+
+    <!-- GAME -->
+    <section id="game" class="screen">
+      <div class="game-header">
+        <div>
+          <span class="eyebrow" id="mission-number">MISSION 01</span>
+          <h2 id="mission-title">المهمة</h2>
+        </div>
+        <div class="score-circle">
+          <span id="score">0</span>
+          <small>POINTS</small>
+        </div>
+      </div>
+
+      <div class="progress-track">
+        <div id="progress-bar"></div>
+      </div>
+
+      <div class="panel game-panel">
+        <div class="mission-emoji" id="mission-emoji">🔎</div>
+        <h3 id="question"></h3>
+        <p id="question-description"></p>
+        <div id="choices" class="choices"></div>
+        <div id="feedback" class="feedback hidden"></div>
+        <button id="next-btn" class="primary-btn hidden" onclick="nextMission()">
+          المهمة التالية ←
+        </button>
+      </div>
+
+      <button class="exit-btn" onclick="goHome()">العودة للرئيسية</button>
+    </section>
+
+    <!-- RESULT -->
+    <section id="result" class="screen">
+      <div class="panel result-panel">
+        <div class="result-emoji">🏆</div>
+        <span class="eyebrow">CHALLENGE COMPLETED</span>
+        <h1>أنقذت يومك!</h1>
+        <p id="result-message"></p>
+
+        <div class="final-score">
+          <span id="final-score">0</span>
+          <small>POINTS</small>
+        </div>
+
+        <div id="badges" class="badges"></div>
+
+        <div class="takeaway">
+          <h3>خد بالك من دي 👀</h3>
+          <p>
+            إدارة الوقت مش إنك تعمل كل حاجة،
+            لكن إنك تختار اللي مهم،
+            وتبدأ، وتدي لنفسك وقت للراحة.
+          </p>
+        </div>
+
+        <button class="primary-btn" onclick="restartGame()">العب تاني ↻</button>
+        <button class="secondary-btn" onclick="goHome()">الرئيسية</button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>TIK TK | وقتك قرار</p>
+    <p>Made to help you make every moment count.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
