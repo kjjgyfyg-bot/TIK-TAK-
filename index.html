@@ -3,12 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#fff8ed">
-  <title>TIK TK | أنقذ يومك</title>
-  <meta name="description" content="TIK TK - لعبة تفاعلية لإدارة الوقت واتخاذ القرارات. خطط يومك، تعامل مع المفاجآت، وأنقذ يومك!">
+  <meta name="theme-color" content="#f6f5ff">
+  <title>TIK TK | BEAT THE CLOCK!</title>
+  <meta name="description" content="لعبة تفاعلية لإدارة الوقت واتخاذ القرارات بطريقة ممتعة.">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -16,17 +18,16 @@
   <div class="ambient ambient-one"></div>
   <div class="ambient ambient-two"></div>
   <div class="ambient ambient-three"></div>
-
   <div id="floating-hours" aria-hidden="true"></div>
 
   <header class="topbar">
-    <button class="brand" onclick="goHome()" aria-label="الرئيسية">
+    <a class="brand" href="#" onclick="goHome();return false;">
       <span class="brand-icon">⏱️</span>
-      <span class="brand-text">TIK <span>TK</span></span>
-    </button>
+      <span>TIK <span class="brand-accent">TK</span></span>
+    </a>
 
-    <button id="sound-toggle" class="sound-toggle" aria-label="تغيير حالة الصوت">
-      <span id="sound-icon">♫</span>
+    <button id="sound-toggle" class="sound-toggle" type="button">
+      <span id="sound-icon">🔊</span>
       <span id="sound-label">الصوت شغال</span>
     </button>
   </header>
@@ -35,12 +36,14 @@
 
     <!-- HOME -->
     <section id="home-screen" class="screen active">
+
       <div class="home-layout">
 
         <div class="hero-content">
+
           <div class="eyebrow">
             <span class="pulse-dot"></span>
-            يومك.. قراراتك.. لعبتك!
+            وقتك.. اختياراتك.. يومك!
           </div>
 
           <h1 class="hero-title">
@@ -50,35 +53,38 @@
           </h1>
 
           <p class="hero-description">
-            يوم مليان مهام ومفاجآت! خطط، اختار، اتحرك..
-            وشوف تقدر تسيطر على وقتك ولا الوقت هيسبقك؟
+            يوم مليان تحديات ومفاجآت! خطط، اتحرك، واتصرف بذكاء..
+            وشوف تقدر توصل لنهاية اليوم بإيه!
           </p>
 
           <div class="hero-buttons">
             <button class="primary-button" onclick="showScreen('intro-screen')">
-              يلا نبدأ! <span>←</span>
+              يلا نبدأ <span>←</span>
             </button>
 
             <button class="secondary-button" onclick="showScreen('intro-screen')">
-              أعرف اللعبة <span>✦</span>
+              إزاي نلعب؟ <span>💡</span>
             </button>
           </div>
 
           <div class="hero-tags">
-            <span>⚡ قرارات حقيقية</span>
-            <span>🕒 يوم كامل</span>
-            <span>🎮 العب بطريقتك</span>
+            <span>🎮 لعبة تفاعلية</span>
+            <span>⚡ تحديات مفاجئة</span>
+            <span>🕒 خطط يومك</span>
           </div>
+
         </div>
 
         <div class="clock-stage">
+
           <div class="orbit orbit-one"></div>
           <div class="orbit orbit-two"></div>
 
           <div class="clock-card">
+
             <div class="clock-top">
-              <span>وقتك ملكك!</span>
-              <span class="clock-live">● LIVE</span>
+              <span>وقتك هو قوتك!</span>
+              <span class="clock-live">● مستعد؟</span>
             </div>
 
             <div class="clock-face">
@@ -96,46 +102,49 @@
               <span class="clock-big">24<span>H</span></span>
               <span class="clock-sub">كل دقيقة بتفرق!</span>
             </div>
+
           </div>
 
           <div class="floating-bubble bubble-one">⚡</div>
           <div class="floating-bubble bubble-two">🎯</div>
           <div class="floating-bubble bubble-three">🚀</div>
           <div class="floating-bubble bubble-four">✨</div>
+
         </div>
 
       </div>
 
       <div class="home-bottom">
+
         <div class="mini-mission">
-          <span class="mini-icon">🧠</span>
+          <span class="mini-icon">🗓️</span>
           <div>
             <strong>خطط</strong>
-            <small>ابدأ بترتيب يومك</small>
+            <small>رتب أولوياتك</small>
           </div>
         </div>
 
         <div class="mini-mission">
           <span class="mini-icon">⏳</span>
           <div>
-            <strong>تحكم</strong>
-            <small>راقب الوقت</small>
+            <strong>تحرك</strong>
+            <small>استغل وقتك</small>
           </div>
         </div>
 
         <div class="mini-mission">
           <span class="mini-icon">⚡</span>
           <div>
-            <strong>حافظ</strong>
-            <small>على طاقتك</small>
+            <strong>اتصرف</strong>
+            <small>واجه المفاجآت</small>
           </div>
         </div>
 
         <div class="mini-mission">
-          <span class="mini-icon">🎲</span>
+          <span class="mini-icon">🧠</span>
           <div>
-            <strong>واجه</strong>
-            <small>المفاجآت</small>
+            <strong>ركز</strong>
+            <small>خد قراراتك</small>
           </div>
         </div>
 
@@ -143,365 +152,413 @@
           <span class="mini-icon">🏆</span>
           <div>
             <strong>اكسب</strong>
-            <small>أنقذ يومك</small>
+            <small>حقق التوازن</small>
           </div>
         </div>
-      </div>
 
-      <div class="signature">
-        <span>Designed & Developed by</span>
-        <strong>Eng: Zainab Madany</strong>
       </div>
     </section>
 
     <!-- INTRO -->
     <section id="intro-screen" class="screen">
+
       <div class="intro-card">
-        <div class="intro-emoji">🚀</div>
+
+        <div class="intro-emoji">🎮</div>
 
         <div class="eyebrow centered">
           <span class="pulse-dot"></span>
-          مستعد للتحدي؟
+          DAY PLANNER
         </div>
 
         <h2 class="section-title">
           يومك بدأ..<br>
-          <span class="gradient-text">والقرار في إيدك!</span>
+          <span class="gradient-text">جاهز تنقذه؟</span>
         </h2>
 
         <p class="intro-description">
-          الساعة 8 الصبح.. عندك يوم كامل ومجموعة مهام.
-          مش مطلوب منك تعمل كل حاجة، المطلوب تعرف تختار،
-          ترتب، وتتعامل مع اللي هيحصل!
+          النهارده عندك مهام كتير، ووقت محدود، ومفاجآت ممكن تغير خطتك!
+          اختار مهامك، رتبها، وخليك مستعد لأي حاجة.
         </p>
 
         <div class="rules-grid">
+
           <div class="rule-card">
-            <span>📋</span>
-            <strong>رتب مهامك</strong>
-            <p>اختار المهام اللي محتاج تخلصها ورتبها بالطريقة اللي تناسبك.</p>
+            <span>🗓️</span>
+            <strong>خطط يومك</strong>
+            <p>اختار المهام اللي عايز تنجزها ورتبها زي ما تحب.</p>
           </div>
 
           <div class="rule-card">
             <span>⏰</span>
-            <strong>راقب ساعتك</strong>
-            <p>كل مهمة بتاخد وقت، والوقت مش بيقف.</p>
+            <strong>راقب الوقت</strong>
+            <p>كل مهمة ليها وقت.. وأنت اللي بتقرر تستغله إزاي.</p>
           </div>
 
           <div class="rule-card">
-            <span>🔋</span>
+            <span>⚡</span>
+            <strong>واجه المفاجآت</strong>
+            <p>رسائل ومواقف غير متوقعة هتختبر خطتك.</p>
+          </div>
+
+          <div class="rule-card">
+            <span>💚</span>
             <strong>حافظ على طاقتك</strong>
-            <p>مش كل يوم ناجح معناه إنك لازم تتعب نفسك.</p>
+            <p>الإنجاز مش بس مهام.. راحتك جزء من يومك.</p>
           </div>
 
-          <div class="rule-card">
-            <span>🎲</span>
-            <strong>استعد للمفاجآت</strong>
-            <p>رسالة أو طلب مفاجئ ممكن يغير خطتك.</p>
-          </div>
         </div>
 
-        <div class="intro-note">
+        <div class="tip-box">
           <span>💡</span>
           <p>
-            مفيش خطة مثالية واحدة! كل قرار هتاخده هيأثر
-            على يومك، وقدرتك على التعديل هي جزء من اللعبة.
+            مش لازم تخلص كل حاجة.. المهم تعرف تختار وتتصرف وتوازن يومك!
           </p>
         </div>
 
-        <button class="primary-button full-button" onclick="beginPlanning()">
+        <button class="primary-button full-button" onclick="openPlanner()">
           جهز يومك! <span>←</span>
         </button>
 
         <button class="text-button" onclick="goHome()">
           رجوع للرئيسية
         </button>
+
       </div>
+
     </section>
 
-    <!-- PLANNING -->
-    <section id="planning-screen" class="screen">
-      <div class="planning-card">
+    <!-- PLANNER -->
+    <section id="planner-screen" class="screen">
 
-        <div class="screen-heading">
-          <div class="heading-icon">📅</div>
-          <div>
-            <div class="eyebrow">LEVEL 01 — DAY PLANNER</div>
-            <h2 class="section-title small-title">
-              رتب يومك.. قبل ما <span class="gradient-text">الوقت يسبقك!</span>
-            </h2>
+      <div class="planner-card">
+
+        <div class="planner-header">
+          <div class="eyebrow">
+            <span class="pulse-dot"></span>
+            LEVEL 01
           </div>
+
+          <h2 class="section-title">
+            DAY <span class="gradient-text">PLANNER</span>
+          </h2>
+
+          <p class="planner-description">
+            اختار المهام اللي محتاج تنجزها النهارده.. وبعدها رتبها بنفسك!
+          </p>
         </div>
 
-        <div class="day-preview">
-          <div class="preview-item">
-            <span>🌅</span>
+        <div class="planner-info-grid">
+
+          <div class="planner-info">
+            <span>🕗</span>
             <div>
-              <small>بداية اليوم</small>
-              <strong>8:00 صباحًا</strong>
+              <strong>بداية اليوم</strong>
+              <small>8:00 صباحًا</small>
             </div>
           </div>
 
-          <div class="preview-item">
-            <span>🌙</span>
+          <div class="planner-info">
+            <span>🕙</span>
             <div>
-              <small>نهاية اليوم</small>
-              <strong>10:00 مساءً</strong>
+              <strong>نهاية التخطيط</strong>
+              <small>10:00 مساءً</small>
             </div>
           </div>
 
-          <div class="preview-item">
+          <div class="planner-info">
             <span>⏳</span>
             <div>
-              <small>الوقت المتاح</small>
-              <strong>14 ساعة</strong>
+              <strong>وقت متاح</strong>
+              <small>14 ساعة</small>
             </div>
           </div>
+
         </div>
 
-        <p class="planning-instructions">
-          اختار المهام اللي عايز تعملها النهارده واضغط عليها عشان تضيفها لجدولك.
-          بعدين رتّبها بالأسهم. مش لازم تختار كل المهام!
+        <div class="section-subheading">
+          <span>🧩</span>
+          <h3>اختار مهامك</h3>
+        </div>
+
+        <p class="small-note">
+          اضغط على المهمة لإضافتها أو إزالتها من خطتك.
         </p>
 
-        <div class="planning-columns">
+        <div id="task-library" class="task-library"></div>
 
-          <div class="task-library">
-            <div class="column-heading">
-              <h3>🧩 المهام المتاحة</h3>
-              <span>اختار اللي يناسبك</span>
+        <div class="plan-summary">
+
+          <div class="summary-top">
+            <div>
+              <strong>خطة يومك</strong>
+              <small id="plan-count">0 مهام</small>
             </div>
 
-            <div id="task-library" class="task-library-list"></div>
-          </div>
-
-          <div class="schedule-panel">
-            <div class="column-heading">
-              <h3>📋 جدول يومك</h3>
-              <span id="schedule-count">0 مهام</span>
-            </div>
-
-            <div id="schedule-list" class="schedule-list"></div>
-
-            <div id="schedule-empty" class="schedule-empty">
-              <div>🗓️</div>
-              <p>جدولك لسه فاضي!</p>
-              <small>ضيف مهام من القائمة اللي جنبك</small>
-            </div>
-
-            <div class="schedule-total">
-              <span>الوقت المخطط</span>
-              <strong id="schedule-total">0 دقيقة</strong>
+            <div class="time-badge">
+              <span>⏱️</span>
+              <strong id="plan-time">0 ساعة</strong>
             </div>
           </div>
+
+          <div class="plan-time-track">
+            <div id="plan-time-fill"></div>
+          </div>
+
+          <p id="plan-warning" class="plan-warning"></p>
+
+          <div id="selected-tasks" class="selected-tasks"></div>
+
+          <div id="empty-plan" class="empty-plan">
+            <span>📝</span>
+            <p>لسه ما اخترتش مهام.. اختار من فوق وابدأ خطتك!</p>
+          </div>
+
         </div>
 
-        <div class="planning-tip">
-          <span>🌟</span>
-          <p>خلي مساحة للراحة وللحاجات اللي ممكن تحصل فجأة. المرونة مهارة!</p>
+        <div class="planner-buttons">
+
+          <button class="primary-button full-button" id="start-day-button" onclick="startDay()">
+            ابدأ يومك! <span>🚀</span>
+          </button>
+
+          <button class="secondary-button full-button" onclick="showScreen('intro-screen')">
+            رجوع
+          </button>
+
         </div>
 
-        <button id="start-day-button" class="primary-button full-button" onclick="startDay()">
-          ابدأ يومك! <span>←</span>
-        </button>
-
-        <button class="text-button" onclick="goHome()">
-          رجوع للرئيسية
-        </button>
       </div>
+
     </section>
 
-    <!-- DAY SIMULATION -->
-    <section id="game-screen" class="screen">
-      <div class="game-card">
+    <!-- PLAY -->
+    <section id="play-screen" class="screen">
+
+      <div class="play-card">
 
         <div class="game-topline">
-          <div class="day-label">
-            <span>🌞</span>
-            <span>يومك الحقيقي.. داخل اللعبة!</span>
+
+          <div class="mission-label">
+            <span>DAY IN PROGRESS</span>
           </div>
 
           <div class="score-pill">
-            ⭐ <span id="score">0</span>
+            ⭐ <span id="game-stars">0</span>
           </div>
+
         </div>
 
-        <div class="status-grid">
+        <div class="progress-track">
+          <div id="day-progress" class="progress-fill"></div>
+        </div>
 
-          <div class="status-box time-box">
-            <div class="status-caption">⏰ الساعة دلوقتي</div>
-            <div id="game-clock" class="status-value">08:00 AM</div>
-            <div id="game-period" class="status-sub">بداية يومك</div>
+        <div class="day-status-grid">
+
+          <div class="status-card clock-status">
+            <span>🕐</span>
+            <small>الوقت الحالي</small>
+            <strong id="current-time">8:00 صباحًا</strong>
           </div>
 
-          <div class="status-box energy-box">
-            <div class="status-caption">🔋 طاقتك</div>
+          <div class="status-card energy-status">
+            <span>⚡</span>
+            <small>طاقة اللاعب</small>
+            <strong id="energy-label">100%</strong>
             <div class="energy-track">
-              <div id="energy-bar" class="energy-fill"></div>
+              <div id="energy-bar"></div>
             </div>
-            <div id="energy-label" class="status-sub">100% — نشاط عالي</div>
+          </div>
+
+        </div>
+
+        <div class="character-area">
+          <div id="player-character" class="player-character">😎</div>
+          <div id="character-message" class="character-message">
+            يلا بينا! يوم جديد وتحدي جديد!
           </div>
         </div>
 
-        <div class="day-progress">
-          <div class="progress-track">
-            <div id="progress-bar" class="progress-fill"></div>
+        <div class="current-task-box">
+
+          <div class="task-live-label">
+            <span class="live-dot"></span>
+            المهمة الحالية
           </div>
-          <div class="progress-labels">
-            <span>8 صباحًا</span>
-            <span>10 مساءً</span>
+
+          <div id="current-task-emoji" class="current-task-emoji">📚</div>
+
+          <h2 id="current-task-name">المهمة</h2>
+
+          <p id="current-task-description"></p>
+
+          <div class="task-duration">
+            <span>⏱️</span>
+            <span id="current-task-duration">30 دقيقة</span>
           </div>
+
+          <div class="task-progress-track">
+            <div id="task-progress-bar"></div>
+          </div>
+
+          <p id="task-progress-text" class="task-progress-text">
+            مستعد؟
+          </p>
+
+          <button id="task-action-button" class="primary-button full-button" onclick="beginTask()">
+            ابدأ المهمة! <span>⚡</span>
+          </button>
+
+          <button id="pause-button" class="secondary-button full-button hidden" onclick="pauseTask()">
+            إيقاف مؤقت
+          </button>
+
+          <button id="resume-button" class="primary-button full-button hidden" onclick="resumeTask()">
+            كمل المهمة! <span>→</span>
+          </button>
+
         </div>
 
-        <div class="current-task-card">
-          <div class="current-task-top">
-            <span class="task-status">المهمة الحالية</span>
-            <span id="task-index">0 / 0</span>
-          </div>
-
-          <div id="current-task-emoji" class="current-task-emoji">🎯</div>
-          <h2 id="current-task-title">مستعد؟</h2>
-          <p id="current-task-description">ابدأ يومك!</p>
-
-          <div class="task-time-info">
-            <span>⏱️ الوقت المطلوب</span>
-            <strong id="current-task-duration">--</strong>
-          </div>
-
-          <div id="task-action-area">
-            <button id="complete-task-button" class="primary-button full-button" onclick="completeTask()">
-              خلصت المهمة! <span>✓</span>
-            </button>
-          </div>
-        </div>
-
-        <div id="event-panel" class="event-panel hidden">
-          <div class="event-top">
-            <span class="event-tag">🎲 حدث مفاجئ!</span>
-            <span id="event-number">EVENT</span>
-          </div>
-
-          <div id="event-emoji" class="event-emoji">📩</div>
-          <h3 id="event-title"></h3>
-          <p id="event-description"></p>
-
-          <div id="event-choices" class="event-choices"></div>
-        </div>
-
-        <div class="day-task-list-panel">
-          <div class="column-heading">
-            <h3>📝 مهام اليوم</h3>
-            <span id="tasks-progress">0 / 0</span>
+        <div class="day-task-list-box">
+          <div class="section-subheading">
+            <span>📋</span>
+            <h3>مهام اليوم</h3>
           </div>
 
           <div id="day-task-list" class="day-task-list"></div>
         </div>
 
-        <div id="game-feedback" class="game-feedback hidden">
-          <span id="game-feedback-icon">✨</span>
-          <div>
-            <strong id="game-feedback-title"></strong>
-            <p id="game-feedback-text"></p>
-          </div>
-        </div>
-
-        <button id="continue-button" class="primary-button full-button hidden" onclick="continueDay()">
-          كمل يومك! <span>←</span>
-        </button>
-
-        <button id="finish-day-button" class="primary-button full-button hidden" onclick="finishDay()">
-          شوف نتيجة يومك! <span>🏆</span>
-        </button>
-
         <div class="game-footer">
-          <span>خطط.. اتصرف.. وكمّل!</span>
-          <span id="day-footer">DAY 01</span>
+          <span>BEAT THE CLOCK!</span>
+          <span id="day-task-counter">0 / 0</span>
         </div>
+
       </div>
+
+    </section>
+
+    <!-- EVENT -->
+    <section id="event-screen" class="screen">
+
+      <div class="event-card">
+
+        <div class="event-burst">⚡</div>
+
+        <div class="eyebrow centered">
+          EVENT ALERT
+        </div>
+
+        <h2 id="event-title" class="section-title">
+          مفاجأة!
+        </h2>
+
+        <p id="event-description" class="event-description"></p>
+
+        <div id="event-options" class="event-options"></div>
+
+        <div class="event-tip">
+          <span>💡</span>
+          <p>مش كل موقف محتاج نفس رد الفعل.. فكر في تأثير قرارك على باقي يومك!</p>
+        </div>
+
+      </div>
+
     </section>
 
     <!-- RESULTS -->
     <section id="result-screen" class="screen">
+
       <div class="result-card">
 
         <div id="result-emoji" class="result-emoji">🏆</div>
 
         <div class="eyebrow centered">
-          <span class="pulse-dot"></span>
-          يومك خلص!
+          DAY COMPLETED
         </div>
 
         <h2 id="result-title" class="result-title">
-          بطل إدارة الوقت!
+          بطل اليوم!
         </h2>
 
-        <div class="score-circle">
-          <div class="score-circle-inner">
-            <span id="final-score">0</span>
-            <small>نقطة</small>
-          </div>
-        </div>
-
-        <div id="result-badge" class="result-badge">
-          🏆 بطل اليوم
+        <div class="result-score-box">
+          <div id="result-stars" class="result-stars">⭐ 0</div>
+          <div id="result-badge" class="result-badge">TIME HERO</div>
         </div>
 
         <p id="result-message" class="result-message"></p>
 
-        <div class="result-stats">
-          <div class="result-stat">
+        <div class="stats-grid">
+
+          <div class="stat-card">
             <span>✅</span>
-            <strong id="completed-count">0</strong>
-            <small>مهام خلصتها</small>
+            <strong id="stat-completed">0</strong>
+            <small>مهام خلصت</small>
           </div>
 
-          <div class="result-stat">
+          <div class="stat-card">
             <span>⏳</span>
-            <strong id="used-time">0</strong>
+            <strong id="stat-time">0</strong>
             <small>دقيقة لعب</small>
           </div>
 
-          <div class="result-stat">
-            <span>🔋</span>
-            <strong id="final-energy">0%</strong>
+          <div class="stat-card">
+            <span>⚡</span>
+            <strong id="stat-energy">0%</strong>
             <small>طاقة متبقية</small>
+          </div>
+
+          <div class="stat-card">
+            <span>🎁</span>
+            <strong id="stat-events">0</strong>
+            <small>مواقف تعاملت معاها</small>
+          </div>
+
+        </div>
+
+        <div id="result-insight" class="result-insight">
+          <span>💡</span>
+          <div>
+            <strong>رسالة اليوم</strong>
+            <p></p>
           </div>
         </div>
 
-        <div id="achievement-list" class="achievement-list"></div>
-
         <div class="takeaway">
-          <span>💡</span>
+          <span>💚</span>
           <div>
-            <strong>السر مش إنك تعمل كل حاجة!</strong>
+            <strong>وقتك ملكك!</strong>
             <p>
-              تنظيم الوقت مش سباق لإنجاز أكبر عدد من المهام.
-              السر إنك تعرف إيه المهم، وتتعامل مع يومك بمرونة،
-              وتسيب مساحة لنفسك كمان.
+              إدارة الوقت مش إنك تخلص كل حاجة.. إدارة الوقت إنك تعرف
+              تختار أولوياتك، تتعامل مع المفاجآت، وتسيب مساحة لنفسك.
             </p>
           </div>
         </div>
 
         <button class="primary-button full-button" onclick="restartGame()">
-          العب تاني! <span>↻</span>
+          جرب يوم جديد! <span>↻</span>
         </button>
 
         <button class="secondary-button full-button" onclick="goHome()">
           رجوع للرئيسية
         </button>
+
       </div>
+
     </section>
 
   </main>
 
-  <div id="toast" class="toast hidden"></div>
   <div id="confetti-container" aria-hidden="true"></div>
 
   <footer class="site-footer">
     <span>TIK TK</span>
-    <span>وقتك.. اختياراتك.. يومك!</span>
-    <span class="footer-signature">By Eng: Zainab Madany</span>
+    <span>BEAT THE CLOCK. OWN YOUR DAY.</span>
   </footer>
+
+  <div class="creator-signature">
+    <span>Designed & Created by</span>
+    <strong>Eng: Zainab Madany</strong>
+  </div>
 
   <script src="script.js"></script>
 </body>
