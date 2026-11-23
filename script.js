@@ -1,291 +1,588 @@
+/* ======================================
+   TIK TK - BEAT THE CLOCK
+   ====================================== */
+
+/* AUDIO FILES - FILES IN REPOSITORY ROOT */
+
+const audioFiles = {
+  music: "music.mp3",
+  correct: "correct.mp3",
+  wrong: "wrong.mp3",
+  click: "click.mp3",
+  victory: "victory.mp3"
+};
+
+const sounds = {};
+
+for (const key in audioFiles) {
+  sounds[key] = new Audio(audioFiles[key]);
+}
+
+sounds.music.loop = true;
+sounds.music.volume = 0.22;
+sounds.correct.volume = 0.85;
+sounds.wrong.volume = 0.75;
+sounds.click.volume = 0.45;
+sounds.victory.volume = 0.85;
+
+let soundEnabled = true;
+let musicStarted = false;
+
+function playSound(name) {
+  if (!soundEnabled || !sounds[name]) return;
+
+  try {
+    sounds[name].currentTime = 0;
+    sounds[name].play().catch(() => {});
+  } catch (error) {
+    console.log("Audio playback unavailable.");
+  }
+}
+
+function startMusic() {
+  if (!soundEnabled || musicStarted) return;
+
+  sounds.music.play()
+    .then(() => {
+      musicStarted = true;
+    })
+    .catch(() => {
+      musicStarted = false;
+    });
+}
+
+function stopMusic() {
+  sounds.music.pause();
+  sounds.music.currentTime = 0;
+  musicStarted = false;
+}
+
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+
+  const icon = document.getElementById("sound-icon");
+  const label = document.getElementById("sound-label");
+
+  icon.textContent = soundEnabled ? "♫" : "🔇";
+  label.textContent = soundEnabled ? "SOUND ON" : "SOUND OFF";
+
+  if (soundEnabled) {
+    startMusic();
+  } else {
+    for (const key in sounds) {
+      sounds[key].pause();
+    }
+    musicStarted = false;
+  }
+}
+
+document.getElementById("sound-toggle")
+  .addEventListener("click", () => {
+    toggleSound();
+  });
+
+
+/* ======================================
+   FLOATING HOURS
+   ====================================== */
+
+function createHours() {
+  const container = document.getElementById("floating-hours");
+
+  for (let i = 0; i < 24; i++) {
+    const hour = document.createElement("span");
+
+    hour.className = "floating-hour";
+    hour.textContent = i + 1;
+
+    hour.style.left = Math.random() * 100 + "%";
+    hour.style.animationDuration = (15 + Math.random() * 25) + "s";
+    hour.style.animationDelay = (-Math.random() * 30) + "s";
+    hour.style.fontSize = (12 + Math.random() * 25) + "px";
+
+    container.appendChild(hour);
+  }
+}
+
+createHours();
+
+
+/* ======================================
+   MISSIONS
+   ====================================== */
+
 const missions = [
   {
-    title: "محقق الوقت",
+    title: "TIME DETECTIVE",
     emoji: "🔎",
-    question: "آدم رجع من المدرسة الساعة 3. فتح الموبايل عشان يشوف رسالة، وفجأة اكتشف إن الساعة بقت 5! إيه أول حاجة تساعده؟",
-    description: "اكتشف طريقة تساعد آدم يفهم فين بيروح وقته.",
-    choices: [
+    description: "Discover where your time really goes.",
+    question: "Adam came home from school at 3 PM. He opened his phone to check a message, and suddenly it was 5 PM! What is the first thing that can help him?",
+    options: [
       {
-        text: "يستمر في استخدام الموبايل ويقول إنه هيتصرف بعدين.",
+        text: "Keep using the phone and say he will deal with it later.",
         points: 0,
-        feedback: "لما بنستخدم الموبايل من غير هدف أو مدة محددة، ممكن الوقت يمر من غير ما نلاحظ. الوعي بالوقت هو أول خطوة."
+        type: "wrong",
+        feedback: "Scrolling without a clear purpose can make time disappear. Recognizing the problem is the first step."
       },
       {
-        text: "يحدد وقت استخدام ويلاحظ الأنشطة اللي بتستهلك يومه.",
+        text: "Set a usage limit and track the activities that consume his day.",
         points: 20,
-        feedback: "ممتاز! أول خطوة لإدارة الوقت إنك تعرف وقتك بيروح فين، وتلاحظ الأنشطة اللي بتستهلكه من غير قصد."
+        type: "correct",
+        feedback: "Excellent! Managing time starts with knowing where it goes and noticing activities that consume it unintentionally."
       },
       {
-        text: "يمسح كل تطبيقاته ويمنع نفسه من استخدام الموبايل.",
+        text: "Delete all his apps and completely stop using his phone.",
         points: 5,
-        feedback: "مش لازم نمنع كل حاجة. الأهم إننا نستخدم التكنولوجيا بشكل واعي، ونحدد وقت مناسب ليها."
+        type: "partial",
+        feedback: "Reducing distractions can help, but balance is better than completely banning technology."
       },
       {
-        text: "يلوم نفسه لأنه ضيع الوقت.",
+        text: "Blame himself for wasting time.",
         points: 0,
-        feedback: "لوم نفسك مش هيعيد الوقت. حاول تفهم السبب وتتعلم إزاي تتعامل معاه المرة الجاية."
+        type: "wrong",
+        feedback: "Blaming yourself doesn't recover lost time. Understanding what happened helps you make a better choice next time."
       }
     ]
   },
+
   {
-    title: "مهمة الأولويات",
+    title: "PRIORITY QUEST",
     emoji: "🎯",
-    question: "عندك 4 حاجات النهارده: امتحان بكرة، مشروع موعده بعد 3 أيام، رسالة من صاحبك، وفيديو بتحبه. تبدأ بإيه؟",
-    description: "مش كل حاجة محتاجة تتعمل في نفس اللحظة. اختار القرار الأقرب للتوازن.",
-    choices: [
+    description: "Not everything deserves your attention right now.",
+    question: "You have four things to do today: an exam tomorrow, a project due in three days, a message from your friend, and a video you love. What should you start with?",
+    options: [
       {
-        text: "أبدأ بالفيديو، وبعدها أشوف هعمل إيه.",
+        text: "Watch the video first, then see what happens.",
         points: 0,
-        feedback: "الترفيه مهم، لكن لو بدأنا بالمشتتات قبل ترتيب الأولويات، ممكن نلاقي نفسنا تحت ضغط."
+        type: "wrong",
+        feedback: "Starting with entertainment before urgent tasks may leave you with less time to prepare."
       },
       {
-        text: "أبدأ مراجعة الامتحان، وأحدد وقت لاحق للمشروع.",
+        text: "Review for the exam and schedule time for the project later.",
         points: 20,
-        feedback: "قرار ذكي! موعد الامتحان أقرب، لكن المشروع مهم برضه، فالتخطيط له قبل ما يتراكم يساعدك."
+        type: "correct",
+        feedback: "Great choice! The exam is urgent, and planning the project ahead prevents last-minute stress."
       },
       {
-        text: "أعمل كل المهام في نفس الوقت.",
+        text: "Do all the tasks at the same time.",
         points: 5,
-        feedback: "تعدد المهام مش دايمًا فعال. التركيز على مهمة واحدة في كل مرة غالبًا يساعدك تنجز بجودة أفضل."
+        type: "partial",
+        feedback: "Trying to multitask can make it harder to focus. Doing one thing at a time is usually more effective."
       },
       {
-        text: "أرد على كل الرسائل الأول.",
+        text: "Reply to all messages first.",
         points: 0,
-        feedback: "الرسائل ممكن تستنى قليلًا لو عندك مهمة أكثر أهمية أو موعد أقرب."
+        type: "wrong",
+        feedback: "Messages can wait when an important deadline is approaching. Prioritize what matters most."
       }
     ]
   },
+
   {
-    title: "معمل التخطيط",
+    title: "PLAN IT",
     emoji: "🧩",
-    question: "عندك مشروع مدرسي كبير مطلوب تسليمه بعد 4 أيام. إيه أحسن طريقة تبدأ بيها؟",
-    description: "المهمة الكبيرة ممكن تبان مخيفة، لكن تقسيمها بيخليها أسهل.",
-    choices: [
+    description: "Turn a big task into small achievable steps.",
+    question: "You have a big school project due in four days. What is the best way to begin?",
+    options: [
       {
-        text: "أستنى آخر يوم وأخلصه كله مرة واحدة.",
+        text: "Wait until the last day and finish everything at once.",
         points: 0,
-        feedback: "التأجيل لآخر لحظة ممكن يسبب ضغط ويقلل جودة شغلك. حاول تبدأ مبكرًا."
+        type: "wrong",
+        feedback: "Leaving everything until the last day increases pressure and makes it harder to produce your best work."
       },
       {
-        text: "أقسم المشروع لأجزاء، وأخصص وقت لكل جزء خلال الأيام الأربعة.",
+        text: "Divide the project into smaller tasks and schedule each one over the four days.",
         points: 20,
-        feedback: "رائع! تقسيم المهمة وتحديد وقت لكل جزء بيساعدك تبدأ، ويتابع تقدمك، ويقلل الضغط."
+        type: "correct",
+        feedback: "Smart planning! Breaking a big task into smaller steps makes it easier to manage and reduces stress."
       },
       {
-        text: "أعمل المشروع كله النهارده وألغي باقي أنشطتي.",
+        text: "Finish the whole project today and cancel all other activities.",
         points: 5,
-        feedback: "الإنجاز مهم، لكن مش لازم تضغط نفسك. توزيع المهام مع الحفاظ على الراحة غالبًا أفضل."
+        type: "partial",
+        feedback: "Starting early is good, but a realistic plan should leave space for other responsibilities and rest."
       },
       {
-        text: "أفكر في المشروع كتير من غير ما أبدأ.",
+        text: "Think about the project a lot without actually starting.",
         points: 0,
-        feedback: "التفكير والتخطيط مهمين، لكن خطوة صغيرة فعلية هي اللي بتحول الفكرة لإنجاز."
+        type: "wrong",
+        feedback: "Thinking is useful, but taking the first small step is what gets the project moving."
       }
     ]
   },
+
   {
-    title: "درع التركيز",
+    title: "FOCUS MODE",
     emoji: "🛡️",
-    question: "بدأت مذاكرة، وبعد 5 دقائق ظهر إشعار، وصاحبك بعت رسالة، وفيديو جديد نزل. إزاي تحافظ على تركيزك؟",
-    description: "اختار استراتيجية تساعدك تحافظ على وقت التركيز.",
-    choices: [
+    description: "Protect your focus from digital distractions.",
+    question: "You start studying, but after five minutes a notification appears, your friend sends a message, and a new video is posted. How can you protect your focus?",
+    options: [
       {
-        text: "أفتح كل الإشعارات عشان ميفوتنيش حاجة.",
+        text: "Open every notification so you don't miss anything.",
         points: 0,
-        feedback: "الإشعارات ممكن تقاطع تركيزك وتخليك ترجع للمهمة بصعوبة. جرب تقللها وقت المذاكرة."
+        type: "wrong",
+        feedback: "Constant interruptions make it harder to stay focused and complete your tasks."
       },
       {
-        text: "أقفل الإشعارات، وأحدد جلسة تركيز قصيرة مع استراحة بعدها.",
+        text: "Turn off notifications and set a short focus session followed by a break.",
         points: 20,
-        feedback: "أحسنت! تقليل المشتتات، وتحديد مدة مناسبة للتركيز، ثم الراحة، ممكن يساعدك تحافظ على طاقتك."
+        type: "correct",
+        feedback: "Excellent! A distraction-free focus session and a planned break help you study more effectively."
       },
       {
-        text: "أذاكر ساعات طويلة من غير أي استراحة.",
+        text: "Study for many hours without taking any breaks.",
         points: 5,
-        feedback: "الراحة جزء من التركيز. جلسات العمل المناسبة والاستراحات تساعدك تستمر بشكل أفضل."
+        type: "partial",
+        feedback: "Long study sessions may leave you exhausted. Short breaks help you maintain your energy and focus."
       },
       {
-        text: "أسيب المذاكرة وأرجع لها وقت ما أكون في المود.",
+        text: "Stop studying and return whenever you feel motivated.",
         points: 0,
-        feedback: "انتظار المزاج ممكن يخلي المهام تتراكم. جرب تبدأ لمدة 5 دقائق، حتى لو مش متحمس."
+        type: "wrong",
+        feedback: "Waiting for the perfect mood can delay your work. A small planned session can help you get started."
       }
     ]
   },
+
   {
-    title: "أنقذ يومك",
+    title: "SAVE YOUR DAY",
     emoji: "⚖️",
-    question: "يومك مليان دراسة، مسؤوليات، وهوايات، وإنت حاسس إنك مرهق. إيه القرار الأفضل؟",
-    description: "إدارة الوقت مش معناها إنك تضغط على نفسك. اختار خطة واقعية.",
-    choices: [
+    description: "Find the balance between productivity and wellbeing.",
+    question: "Your day is full of studying, responsibilities, and hobbies, and you feel exhausted. What is the best decision?",
+    options: [
       {
-        text: "ألغى النوم والراحة عشان أخلص كل حاجة.",
+        text: "Cancel sleep and rest so you can finish everything.",
         points: 0,
-        feedback: "النوم والراحة مش وقت ضايع. إهمالهم ممكن يؤثر على صحتك وتركيزك."
+        type: "wrong",
+        feedback: "Sacrificing sleep can hurt your health and concentration. Rest is part of a productive day."
       },
       {
-        text: "أحدد أهم المهام، وأوزعها، وأخصص وقتًا للراحة والنوم.",
+        text: "Prioritize important tasks, organize them, and make time for rest and sleep.",
         points: 20,
-        feedback: "ده هو التوازن! إدارة الوقت تعني تنظيم المسؤوليات مع الحفاظ على احتياجاتك وطاقتك."
+        type: "correct",
+        feedback: "That's the right balance! A realistic plan includes priorities, responsibilities, hobbies, rest, and enough sleep."
       },
       {
-        text: "أعمل كل حاجة في نفس اللحظة.",
+        text: "Try to do everything at the same time.",
         points: 5,
-        feedback: "حاول تركز على مهمة واحدة، وتوزع وقتك بشكل واقعي بدل ما تحمل نفسك أكتر من طاقتها."
+        type: "partial",
+        feedback: "Multitasking may increase stress. Organizing your tasks and focusing on one at a time is a better approach."
       },
       {
-        text: "ألغى كل المهام وأسيب اليوم من غير خطة.",
+        text: "Cancel everything and spend the whole day without a plan.",
         points: 0,
-        feedback: "ممكن تحتاج راحة فعلًا، لكن لو تقدر، حدد مهمة صغيرة واحدة وأعد ترتيب باقي يومك بهدوء."
+        type: "wrong",
+        feedback: "Taking a break is important, but a flexible plan can help you feel less overwhelmed."
       }
     ]
   }
 ];
 
+
+/* ======================================
+   GAME STATE
+   ====================================== */
+
 let currentMission = 0;
-let score = 0;
+let totalScore = 0;
 let answered = false;
 
-const appScreens = ["home", "intro", "game", "result"];
+
+/* ======================================
+   SCREEN CONTROL
+   ====================================== */
 
 function showScreen(screenId) {
-  appScreens.forEach(id => {
-    document.getElementById(id).classList.remove("active");
+  document.querySelectorAll(".screen").forEach(screen => {
+    screen.classList.remove("active");
   });
-  document.getElementById(screenId).classList.add("active");
-  window.scrollTo({ top: 0, behavior: "smooth" });
+
+  const target = document.getElementById(screenId);
+
+  if (target) {
+    target.classList.add("active");
+  }
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
 }
 
 function goHome() {
-  showScreen("home");
+  playSound("click");
+  showScreen("home-screen");
 }
 
-function showIntro() {
-  showScreen("intro");
-}
+
+/* ======================================
+   START GAME
+   ====================================== */
 
 function startGame() {
+  playSound("click");
+  startMusic();
+
   currentMission = 0;
-  score = 0;
+  totalScore = 0;
+  answered = false;
+
+  document.getElementById("score").textContent = "0";
+
   renderMission();
-  showScreen("game");
+  showScreen("game-screen");
 }
+
+
+/* ======================================
+   RENDER MISSION
+   ====================================== */
 
 function renderMission() {
   answered = false;
 
-  const m = missions[currentMission];
+  const mission = missions[currentMission];
 
   document.getElementById("mission-number").textContent =
     "MISSION " + String(currentMission + 1).padStart(2, "0");
 
-  document.getElementById("mission-title").textContent = m.title;
-  document.getElementById("mission-emoji").textContent = m.emoji;
-  document.getElementById("question").textContent = m.question;
-  document.getElementById("question-description").textContent = m.description;
-  document.getElementById("score").textContent = score;
-
-  document.getElementById("progress-bar").style.width =
-    ((currentMission) / missions.length * 100) + "%";
-
-  const choicesBox = document.getElementById("choices");
-  choicesBox.innerHTML = "";
-
-  m.choices.forEach((choice, index) => {
-    const button = document.createElement("button");
-    button.className = "choice-btn";
-    button.textContent = choice.text;
-    button.onclick = () => chooseAnswer(index);
-    choicesBox.appendChild(button);
-  });
-
-  document.getElementById("feedback").classList.add("hidden");
-  document.getElementById("next-btn").classList.add("hidden");
-}
-
-function chooseAnswer(index) {
-  if (answered) return;
-  answered = true;
-
-  const m = missions[currentMission];
-  const choice = m.choices[index];
-
-  score += choice.points;
-
-  const buttons = document.querySelectorAll(".choice-btn");
-  buttons.forEach(btn => btn.disabled = true);
-
-  if (choice.points >= 20) {
-    buttons[index].classList.add("correct");
-  } else {
-    buttons[index].classList.add("wrong");
-  }
-
-  document.getElementById("score").textContent = score;
-
-  const feedbackBox = document.getElementById("feedback");
-  feedbackBox.innerHTML =
-    "<h4>" + (choice.points >= 20 ? "✨ اختيار ذكي!" : "💡 نتعلم من كل اختيار") +
-    "</h4><p>" + choice.feedback + "</p>";
-
-  feedbackBox.classList.remove("hidden");
+  document.getElementById("mission-count-footer").textContent =
+    (currentMission + 1) + " / 5";
 
   document.getElementById("progress-bar").style.width =
     ((currentMission + 1) / missions.length * 100) + "%";
 
-  const nextButton = document.getElementById("next-btn");
-  nextButton.textContent =
-    currentMission === missions.length - 1
-      ? "شوف نتيجتك 🏆"
-      : "المهمة التالية ←";
+  document.getElementById("mission-emoji").textContent =
+    mission.emoji;
 
-  nextButton.classList.remove("hidden");
+  document.getElementById("mission-title").textContent =
+    mission.title;
+
+  document.getElementById("mission-description").textContent =
+    mission.description;
+
+  document.getElementById("question").textContent =
+    mission.question;
+
+  document.getElementById("score").textContent =
+    totalScore;
+
+  const choices = document.getElementById("choices");
+  choices.innerHTML = "";
+
+  document.getElementById("feedback").classList.add("hidden");
+  document.getElementById("next-button").classList.add("hidden");
+
+  const letters = ["A", "B", "C", "D"];
+
+  mission.options.forEach((option, index) => {
+    const button = document.createElement("button");
+
+    button.className = "choice-button";
+
+    button.innerHTML =
+      '<span class="choice-letter">' + letters[index] + '</span>' +
+      '<span class="choice-text"></span>';
+
+    button.querySelector(".choice-text").textContent = option.text;
+
+    button.addEventListener("click", () => {
+      chooseAnswer(index);
+    });
+
+    choices.appendChild(button);
+  });
 }
 
+
+/* ======================================
+   ANSWER
+   ====================================== */
+
+function chooseAnswer(index) {
+  if (answered) return;
+
+  answered = true;
+
+  playSound("click");
+
+  const mission = missions[currentMission];
+  const selected = mission.options[index];
+
+  totalScore += selected.points;
+
+  document.getElementById("score").textContent =
+    totalScore;
+
+  const buttons = document.querySelectorAll(".choice-button");
+
+  buttons.forEach((button, i) => {
+    button.disabled = true;
+
+    if (i === index) {
+      button.classList.add(selected.type);
+    }
+  });
+
+  if (selected.type === "correct") {
+    playSound("correct");
+  } else {
+    playSound("wrong");
+  }
+
+  showFeedback(selected);
+
+  document.getElementById("next-button").classList.remove("hidden");
+
+  document.getElementById("next-button").textContent =
+    currentMission === missions.length - 1
+      ? "SEE MY RESULTS →"
+      : "NEXT MISSION →";
+}
+
+
+/* ======================================
+   FEEDBACK
+   ====================================== */
+
+function showFeedback(selected) {
+  const feedback = document.getElementById("feedback");
+  const icon = document.getElementById("feedback-icon");
+  const title = document.getElementById("feedback-title");
+  const text = document.getElementById("feedback-text");
+
+  feedback.classList.remove(
+    "hidden",
+    "correct-feedback",
+    "partial-feedback",
+    "wrong-feedback"
+  );
+
+  if (selected.type === "correct") {
+    feedback.classList.add("correct-feedback");
+    icon.textContent = "🎉";
+    title.textContent = "EXCELLENT CHOICE! +" + selected.points;
+  } else if (selected.type === "partial") {
+    feedback.classList.add("partial-feedback");
+    icon.textContent = "🤔";
+    title.textContent = "NOT BAD! +" + selected.points;
+  } else {
+    feedback.classList.add("wrong-feedback");
+    icon.textContent = "💡";
+    title.textContent = "THINK AGAIN NEXT TIME! +0";
+  }
+
+  text.textContent = selected.feedback;
+}
+
+
+/* ======================================
+   NEXT MISSION
+   ====================================== */
+
 function nextMission() {
-  if (currentMission < missions.length - 1) {
-    currentMission++;
+  playSound("click");
+
+  currentMission++;
+
+  if (currentMission < missions.length) {
     renderMission();
   } else {
     showResult();
   }
 }
 
+
+/* ======================================
+   RESULTS
+   ====================================== */
+
 function showResult() {
-  showScreen("result");
+  stopMusic();
 
-  document.getElementById("final-score").textContent = score;
+  showScreen("result-screen");
 
-  let message = "";
+  playSound("victory");
 
-  if (score === 100) {
-    message = "WOW! أنت Time Master! اختياراتك أظهرت فهمًا رائعًا لكيفية إدارة الوقت والتوازن.";
-  } else if (score >= 60) {
-    message = "أداء رائع! عندك أفكار ذكية لتنظيم وقتك، ولسه تقدر تطور مهاراتك أكتر.";
+  document.getElementById("final-score").textContent =
+    totalScore;
+
+  const title = document.getElementById("result-title");
+  const badge = document.getElementById("result-badge");
+  const message = document.getElementById("result-message");
+  const emoji = document.getElementById("result-emoji");
+
+  if (totalScore >= 80) {
+    title.textContent = "TIME MASTER!";
+    badge.textContent = "🏆 TIME MASTER";
+    emoji.textContent = "🏆";
+    message.textContent =
+      "Amazing! You made smart choices, prioritized your tasks, and protected your time. Keep building these habits!";
+  } else if (totalScore >= 50) {
+    title.textContent = "TIME EXPLORER!";
+    badge.textContent = "🚀 TIME EXPLORER";
+    emoji.textContent = "🚀";
+    message.textContent =
+      "Good job! You are learning how to make better time choices. Keep practicing and your skills will grow!";
   } else {
-    message = "رحلتك بدأت! إدارة الوقت مهارة بتتعلمها بالتجربة، وكل قرار جديد فرصة تبدأ أحسن.";
+    title.textContent = "TIME STARTER!";
+    badge.textContent = "🌟 TIME STARTER";
+    emoji.textContent = "🌟";
+    message.textContent =
+      "Every journey starts somewhere! You have the power to improve your choices and take control of your day.";
   }
 
-  document.getElementById("result-message").textContent = message;
-
-  const badgesBox = document.getElementById("badges");
-  badgesBox.innerHTML = "";
-
-  const badgeNames = [
-    "🔎 Time Detective",
-    "🎯 Priority Master",
-    "🧩 Planner",
-    "🛡️ Focus Guardian",
-    "⚖️ Time Balancer"
-  ];
-
-  badgeNames.forEach(name => {
-    const badge = document.createElement("div");
-    badge.className = "badge";
-    badge.textContent = name;
-    badgesBox.appendChild(badge);
-  });
+  if (totalScore >= 50) {
+    launchConfetti();
+  }
 }
 
+
+/* ======================================
+   CONFETTI
+   ====================================== */
+
+function launchConfetti() {
+  const container = document.getElementById("confetti-container");
+
+  const pieces = 100;
+
+  const colors = [
+    "#42e8e0",
+    "#b66cff",
+    "#ff5eae",
+    "#ff9e45",
+    "#f6d65c",
+    "#53e6a1"
+  ];
+
+  for (let i = 0; i < pieces; i++) {
+    const piece = document.createElement("div");
+
+    piece.className = "confetti";
+
+    piece.style.left = Math.random() * 100 + "%";
+    piece.style.background = colors[
+      Math.floor(Math.random() * colors.length)
+    ];
+
+    piece.style.animationDelay = Math.random() * 1.5 + "s";
+    piece.style.animationDuration = (2 + Math.random() * 2) + "s";
+
+    container.appendChild(piece);
+  }
+
+  setTimeout(() => {
+    container.innerHTML = "";
+  }, 5000);
+}
+
+
+/* ======================================
+   RESTART
+   ====================================== */
+
 function restartGame() {
+  playSound("click");
   startGame();
 }
