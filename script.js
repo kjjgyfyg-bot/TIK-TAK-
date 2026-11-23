@@ -1,29 +1,32 @@
-/* ======================================
-   TIK TK - BEAT THE CLOCK
-   ====================================== */
+/* =========================================
+   TIK TK - BEAT THE CLOCK!
+   DAY PLANNER GAME
+========================================= */
 
-/* AUDIO FILES - FILES IN REPOSITORY ROOT */
+/* AUDIO */
 
 const audioFiles = {
-  music: "music.mp3",
-  correct: "correct.mp3",
-  wrong: "wrong.mp3",
-  click: "click.mp3",
-  victory: "victory.mp3"
+  music: "./music.mp3",
+  correct: "./correct.mp3",
+  wrong: "./wrong.mp3",
+  click: "./click.mp3",
+  victory: "./victory.mp3"
 };
 
 const sounds = {};
 
 for (const key in audioFiles) {
   sounds[key] = new Audio(audioFiles[key]);
+  sounds[key].preload = "auto";
 }
 
 sounds.music.loop = true;
-sounds.music.volume = 0.22;
-sounds.correct.volume = 0.85;
-sounds.wrong.volume = 0.75;
-sounds.click.volume = 0.45;
-sounds.victory.volume = 0.85;
+sounds.music.volume = 0.18;
+
+sounds.correct.volume = 0.75;
+sounds.wrong.volume = 0.65;
+sounds.click.volume = 0.4;
+sounds.victory.volume = 0.8;
 
 let soundEnabled = true;
 let musicStarted = false;
@@ -32,10 +35,14 @@ function playSound(name) {
   if (!soundEnabled || !sounds[name]) return;
 
   try {
-    sounds[name].currentTime = 0;
-    sounds[name].play().catch(() => {});
+    const audio = sounds[name];
+
+    audio.pause();
+    audio.currentTime = 0;
+
+    audio.play().catch(() => {});
   } catch (error) {
-    console.log("Audio playback unavailable.");
+    console.log("Sound unavailable.");
   }
 }
 
@@ -53,41 +60,47 @@ function startMusic() {
 
 function stopMusic() {
   sounds.music.pause();
-  sounds.music.currentTime = 0;
+
+  try {
+    sounds.music.currentTime = 0;
+  } catch (error) {}
+
   musicStarted = false;
 }
 
 function toggleSound() {
   soundEnabled = !soundEnabled;
 
-  const icon = document.getElementById("sound-icon");
-  const label = document.getElementById("sound-label");
+  document.getElementById("sound-icon").textContent =
+    soundEnabled ? "🔊" : "🔇";
 
-  icon.textContent = soundEnabled ? "♫" : "🔇";
-  label.textContent = soundEnabled ? "SOUND ON" : "SOUND OFF";
+  document.getElementById("sound-label").textContent =
+    soundEnabled ? "الصوت شغال" : "الصوت مقفول";
 
   if (soundEnabled) {
     startMusic();
+    playSound("click");
   } else {
     for (const key in sounds) {
       sounds[key].pause();
     }
+
     musicStarted = false;
   }
 }
 
 document.getElementById("sound-toggle")
-  .addEventListener("click", () => {
-    toggleSound();
-  });
+  .addEventListener("click", toggleSound);
 
 
-/* ======================================
+/* =========================================
    FLOATING HOURS
-   ====================================== */
+========================================= */
 
 function createHours() {
   const container = document.getElementById("floating-hours");
+
+  if (!container) return;
 
   for (let i = 0; i < 24; i++) {
     const hour = document.createElement("span");
@@ -96,9 +109,14 @@ function createHours() {
     hour.textContent = i + 1;
 
     hour.style.left = Math.random() * 100 + "%";
-    hour.style.animationDuration = (15 + Math.random() * 25) + "s";
-    hour.style.animationDelay = (-Math.random() * 30) + "s";
-    hour.style.fontSize = (12 + Math.random() * 25) + "px";
+    hour.style.animationDuration =
+      (15 + Math.random() * 25) + "s";
+
+    hour.style.animationDelay =
+      (-Math.random() * 30) + "s";
+
+    hour.style.fontSize =
+      (12 + Math.random() * 25) + "px";
 
     container.appendChild(hour);
   }
@@ -107,190 +125,274 @@ function createHours() {
 createHours();
 
 
-/* ======================================
-   MISSIONS
-   ====================================== */
+/* =========================================
+   TASK LIBRARY
+========================================= */
 
-const missions = [
+const taskLibrary = [
   {
-    title: "TIME DETECTIVE",
-    emoji: "🔎",
-    description: "Discover where your time really goes.",
-    question: "Adam came home from school at 3 PM. He opened his phone to check a message, and suddenly it was 5 PM! What is the first thing that can help him?",
+    id: "study",
+    name: "مذاكرة فصل",
+    emoji: "📚",
+    duration: 60,
+    energy: -15,
+    stars: 20,
+    description: "ركز في مذاكرة الفصل وحاول تخلص الجزء المطلوب.",
+    category: "تعلم",
+    message: "أحسنت! خطوة صغيرة في المذاكرة بتفرق."
+  },
+
+  {
+    id: "homework",
+    name: "حل الواجب",
+    emoji: "✏️",
+    duration: 40,
+    energy: -12,
+    stars: 15,
+    description: "حل الواجب المطلوب منك وراجع إجاباتك.",
+    category: "تعلم",
+    message: "واجب خلص! كده بتقرب من أهدافك."
+  },
+
+  {
+    id: "room",
+    name: "ترتيب الأوضة",
+    emoji: "🧹",
+    duration: 20,
+    energy: -8,
+    stars: 10,
+    description: "رتب مكانك وخليه جاهز ليوم أحسن.",
+    category: "مسؤولية",
+    message: "مكان مرتب.. دماغ أهدى!"
+  },
+
+  {
+    id: "help",
+    name: "مساعدة في البيت",
+    emoji: "🏠",
+    duration: 30,
+    energy: -10,
+    stars: 15,
+    description: "شارك في مسؤوليات البيت وساعد اللي حواليك.",
+    category: "مسؤولية",
+    message: "مساعدتك بتفرق.. شكرًا ليك!"
+  },
+
+  {
+    id: "friends",
+    name: "وقت مع صحابك",
+    emoji: "👫",
+    duration: 45,
+    energy: 5,
+    stars: 15,
+    description: "استمتع بوقت حلو مع صحابك.",
+    category: "متعة",
+    message: "الوقت الحلو مع الناس اللي بنحبهم مهم."
+  },
+
+  {
+    id: "hobby",
+    name: "ممارسة هواية",
+    emoji: "🎨",
+    duration: 30,
+    energy: 8,
+    stars: 15,
+    description: "خصص وقت لحاجة بتحب تعملها.",
+    category: "متعة",
+    message: "هوايتك مساحة ليك.. استمتع بيها!"
+  },
+
+  {
+    id: "rest",
+    name: "استراحة",
+    emoji: "☕",
+    duration: 30,
+    energy: 20,
+    stars: 10,
+    description: "خد استراحة حقيقية بعيد عن ضغط المهام.",
+    category: "راحة",
+    message: "الراحة مش تضييع وقت.. دي جزء من خطتك!"
+  },
+
+  {
+    id: "exercise",
+    name: "حركة ونشاط",
+    emoji: "🏃",
+    duration: 30,
+    energy: -5,
+    stars: 15,
+    description: "حرك جسمك شوية وارجع بطاقة مختلفة.",
+    category: "صحة",
+    message: "الحركة بتساعدك تجدد نشاطك!"
+  },
+
+  {
+    id: "phone",
+    name: "وقت للموبايل",
+    emoji: "📱",
+    duration: 30,
+    energy: 0,
+    stars: 5,
+    description: "خصص وقت للموبايل بدل ما الوقت يتسحب منك.",
+    category: "متعة",
+    message: "لما تحدد وقت للموبايل، أنت اللي بتتحكم!"
+  }
+];
+
+
+/* =========================================
+   GAME EVENTS
+========================================= */
+
+const gameEvents = [
+  {
+    id: "message",
+    threshold: 2,
+    emoji: "📱",
+    title: "رسالة مفاجئة!",
+    description:
+      "صاحبك بعتلك: «يلا نلعب! مستنيك».. بس عندك مهام لسه! هتعمل إيه؟",
+
     options: [
       {
-        text: "Keep using the phone and say he will deal with it later.",
-        points: 0,
-        type: "wrong",
-        feedback: "Scrolling without a clear purpose can make time disappear. Recognizing the problem is the first step."
+        text: "أرد عليه وأحدد وقت نلعب فيه بعد ما أخلص المهمة الحالية.",
+        description: "تواصل من غير ما تسيب خطتك تتلخبط.",
+        time: 5,
+        energy: 0,
+        stars: 10,
+        message: "عرفت تحافظ على التواصل وعلى خطتك في نفس الوقت!"
       },
+
       {
-        text: "Set a usage limit and track the activities that consume his day.",
-        points: 20,
-        type: "correct",
-        feedback: "Excellent! Managing time starts with knowing where it goes and noticing activities that consume it unintentionally."
+        text: "أسيب كل حاجة وأدخل ألعب معاه.",
+        description: "ممكن وقت اللعب يطول ويأثر على باقي يومك.",
+        time: 30,
+        energy: 5,
+        stars: 2,
+        message: "استمتعت، لكن خلي بالك من الوقت عشان باقي المهام."
       },
+
       {
-        text: "Delete all his apps and completely stop using his phone.",
-        points: 5,
-        type: "partial",
-        feedback: "Reducing distractions can help, but balance is better than completely banning technology."
-      },
-      {
-        text: "Blame himself for wasting time.",
-        points: 0,
-        type: "wrong",
-        feedback: "Blaming yourself doesn't recover lost time. Understanding what happened helps you make a better choice next time."
+        text: "أقفل الإشعارات وأكمل، وأرد عليه في وقت مناسب.",
+        description: "تأجل الرد عشان تحافظ على تركيزك.",
+        time: 0,
+        energy: 0,
+        stars: 15,
+        message: "قرار ذكي! مش كل رسالة لازم نرد عليها فورًا."
       }
     ]
   },
 
   {
-    title: "PRIORITY QUEST",
-    emoji: "🎯",
-    description: "Not everything deserves your attention right now.",
-    question: "You have four things to do today: an exam tomorrow, a project due in three days, a message from your friend, and a video you love. What should you start with?",
+    id: "help",
+    threshold: 4,
+    emoji: "🏠",
+    title: "طلب مساعدة!",
+    description:
+      "حد من البيت طلب منك تساعده في حاجة محتاجة حوالي 20 دقيقة.. وخطتك مش فاضية! هتتصرف إزاي؟",
+
     options: [
       {
-        text: "Watch the video first, then see what happens.",
-        points: 0,
-        type: "wrong",
-        feedback: "Starting with entertainment before urgent tasks may leave you with less time to prepare."
+        text: "أساعده وأراجع خطتي بعدها.",
+        description: "تضيف الموقف لليوم وتعيد ترتيب باقي المهام.",
+        time: 20,
+        energy: -5,
+        stars: 15,
+        message: "مرونة ممتازة! خطتك قابلة للتعديل."
       },
+
       {
-        text: "Review for the exam and schedule time for the project later.",
-        points: 20,
-        type: "correct",
-        feedback: "Great choice! The exam is urgent, and planning the project ahead prevents last-minute stress."
+        text: "أعتذر وأوضح إني مشغول، وأحدد وقت أساعد فيه.",
+        description: "تواصل واضح مع مراعاة مسؤولياتك.",
+        time: 5,
+        energy: 0,
+        stars: 10,
+        message: "التواصل وتحديد وقت مناسب بيساعدك توازن مسؤولياتك."
       },
+
       {
-        text: "Do all the tasks at the same time.",
-        points: 5,
-        type: "partial",
-        feedback: "Trying to multitask can make it harder to focus. Doing one thing at a time is usually more effective."
-      },
-      {
-        text: "Reply to all messages first.",
-        points: 0,
-        type: "wrong",
-        feedback: "Messages can wait when an important deadline is approaching. Prioritize what matters most."
+        text: "أحاول أخلص كل حاجة بسرعة وأساعد من غير ما أرتب.",
+        description: "ممكن تعمل حاجات كتير بس تتعب أو تتلخبط.",
+        time: 25,
+        energy: -10,
+        stars: 5,
+        message: "خد بالك! أحيانًا السرعة من غير تنظيم بتزود الضغط."
       }
     ]
   },
 
   {
-    title: "PLAN IT",
-    emoji: "🧩",
-    description: "Turn a big task into small achievable steps.",
-    question: "You have a big school project due in four days. What is the best way to begin?",
-    options: [
-      {
-        text: "Wait until the last day and finish everything at once.",
-        points: 0,
-        type: "wrong",
-        feedback: "Leaving everything until the last day increases pressure and makes it harder to produce your best work."
-      },
-      {
-        text: "Divide the project into smaller tasks and schedule each one over the four days.",
-        points: 20,
-        type: "correct",
-        feedback: "Smart planning! Breaking a big task into smaller steps makes it easier to manage and reduces stress."
-      },
-      {
-        text: "Finish the whole project today and cancel all other activities.",
-        points: 5,
-        type: "partial",
-        feedback: "Starting early is good, but a realistic plan should leave space for other responsibilities and rest."
-      },
-      {
-        text: "Think about the project a lot without actually starting.",
-        points: 0,
-        type: "wrong",
-        feedback: "Thinking is useful, but taking the first small step is what gets the project moving."
-      }
-    ]
-  },
+    id: "distraction",
+    threshold: 6,
+    emoji: "🎮",
+    title: "لص الوقت!",
+    description:
+      "وأنت شغال، ظهر فيديو جديد وعروض وإشعارات.. وبدأت تحس إنك عايز تسيب المهمة! إيه الحل؟",
 
-  {
-    title: "FOCUS MODE",
-    emoji: "🛡️",
-    description: "Protect your focus from digital distractions.",
-    question: "You start studying, but after five minutes a notification appears, your friend sends a message, and a new video is posted. How can you protect your focus?",
     options: [
       {
-        text: "Open every notification so you don't miss anything.",
-        points: 0,
-        type: "wrong",
-        feedback: "Constant interruptions make it harder to stay focused and complete your tasks."
+        text: "أقفل الإشعارات وأكمل المهمة وبعدها أخصص وقت للموبايل.",
+        description: "تحمي وقت تركيزك وتحدد وقت للترفيه.",
+        time: 0,
+        energy: 5,
+        stars: 15,
+        message: "قدرت تتحكم في وقتك بدل ما الوقت يتحكم فيك!"
       },
-      {
-        text: "Turn off notifications and set a short focus session followed by a break.",
-        points: 20,
-        type: "correct",
-        feedback: "Excellent! A distraction-free focus session and a planned break help you study more effectively."
-      },
-      {
-        text: "Study for many hours without taking any breaks.",
-        points: 5,
-        type: "partial",
-        feedback: "Long study sessions may leave you exhausted. Short breaks help you maintain your energy and focus."
-      },
-      {
-        text: "Stop studying and return whenever you feel motivated.",
-        points: 0,
-        type: "wrong",
-        feedback: "Waiting for the perfect mood can delay your work. A small planned session can help you get started."
-      }
-    ]
-  },
 
-  {
-    title: "SAVE YOUR DAY",
-    emoji: "⚖️",
-    description: "Find the balance between productivity and wellbeing.",
-    question: "Your day is full of studying, responsibilities, and hobbies, and you feel exhausted. What is the best decision?",
-    options: [
       {
-        text: "Cancel sleep and rest so you can finish everything.",
-        points: 0,
-        type: "wrong",
-        feedback: "Sacrificing sleep can hurt your health and concentration. Rest is part of a productive day."
+        text: "أشوف فيديو واحد بس.",
+        description: "ممكن يخلص بسرعة، وممكن يفتح باب لمشتتات تانية.",
+        time: 10,
+        energy: -3,
+        stars: 5,
+        message: "الفيديو ممكن يطول.. حاول تحدد وقت واضح."
       },
+
       {
-        text: "Prioritize important tasks, organize them, and make time for rest and sleep.",
-        points: 20,
-        type: "correct",
-        feedback: "That's the right balance! A realistic plan includes priorities, responsibilities, hobbies, rest, and enough sleep."
-      },
-      {
-        text: "Try to do everything at the same time.",
-        points: 5,
-        type: "partial",
-        feedback: "Multitasking may increase stress. Organizing your tasks and focusing on one at a time is a better approach."
-      },
-      {
-        text: "Cancel everything and spend the whole day without a plan.",
-        points: 0,
-        type: "wrong",
-        feedback: "Taking a break is important, but a flexible plan can help you feel less overwhelmed."
+        text: "أسيب المهمة وأكمل تصفح.",
+        description: "الوقت ممكن يضيع من غير ما تحس.",
+        time: 20,
+        energy: -5,
+        stars: 0,
+        message: "خلي بالك من الوقت! التصفح المفتوح بيستهلك وقت أكتر مما تتوقع."
       }
     ]
   }
 ];
 
 
-/* ======================================
+/* =========================================
    GAME STATE
-   ====================================== */
+========================================= */
 
-let currentMission = 0;
-let totalScore = 0;
-let answered = false;
+let selectedTasks = [];
+
+let completedTasks = [];
+let currentTaskIndex = 0;
+
+let totalStars = 0;
+let energy = 100;
+
+let currentMinutes = 8 * 60;
+let totalGameMinutes = 0;
+
+let eventQueue = [];
+let eventPending = false;
+let currentEvent = null;
+
+let taskTimer = null;
+let taskRunning = false;
+let taskElapsed = 0;
+
+const MAX_DAY_MINUTES = 14 * 60;
+const SIMULATION_SPEED = 75;
+
+let eventCount = 0;
 
 
-/* ======================================
+/* =========================================
    SCREEN CONTROL
-   ====================================== */
+========================================= */
 
 function showScreen(screenId) {
   document.querySelectorAll(".screen").forEach(screen => {
@@ -311,249 +413,859 @@ function showScreen(screenId) {
 
 function goHome() {
   playSound("click");
+
+  stopTaskTimer();
+
   showScreen("home-screen");
 }
 
+function restartGame() {
+  playSound("click");
 
-/* ======================================
-   START GAME
-   ====================================== */
+  stopTaskTimer();
 
-function startGame() {
+  selectedTasks = [];
+  completedTasks = [];
+
+  totalStars = 0;
+  energy = 100;
+
+  currentMinutes = 8 * 60;
+  totalGameMinutes = 0;
+
+  eventQueue = [];
+  eventPending = false;
+  currentEvent = null;
+
+  currentTaskIndex = 0;
+  taskElapsed = 0;
+  eventCount = 0;
+
+  openPlanner();
+}
+
+
+/* =========================================
+   PLANNER
+========================================= */
+
+function openPlanner() {
+  playSound("click");
+
+  selectedTasks = [];
+
+  renderTaskLibrary();
+  updatePlanner();
+
+  showScreen("planner-screen");
+}
+
+function renderTaskLibrary() {
+  const container = document.getElementById("task-library");
+
+  container.innerHTML = "";
+
+  taskLibrary.forEach(task => {
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.className = "task-option";
+
+    const isSelected = selectedTasks.some(
+      item => item.id === task.id
+    );
+
+    if (isSelected) {
+      button.classList.add("selected");
+    }
+
+    button.innerHTML = `
+      <span class="task-icon">${task.emoji}</span>
+
+      <span class="task-info">
+        <strong>${task.name}</strong>
+        <small>${task.duration} دقيقة • ${task.category}</small>
+      </span>
+
+      <span class="task-add-indicator">
+        ${isSelected ? "✓" : "+"}
+      </span>
+    `;
+
+    button.addEventListener("click", () => {
+      toggleTask(task.id);
+    });
+
+    container.appendChild(button);
+  });
+}
+
+function toggleTask(taskId) {
+  playSound("click");
+
+  const task = taskLibrary.find(
+    item => item.id === taskId
+  );
+
+  if (!task) return;
+
+  const existingIndex = selectedTasks.findIndex(
+    item => item.id === taskId
+  );
+
+  if (existingIndex !== -1) {
+    selectedTasks.splice(existingIndex, 1);
+  } else {
+    const proposedTime =
+      selectedTasks.reduce(
+        (total, item) => total + item.duration,
+        0
+      ) + task.duration;
+
+    if (proposedTime > MAX_DAY_MINUTES) {
+      document.getElementById("plan-warning").textContent =
+        "مش هينفع نضيف المهمة دي لأن الوقت المتاح في يومك خلص! حاول تختار أو ترتب مهامك من جديد.";
+
+      document.getElementById("plan-warning")
+        .classList.add("warning");
+
+      playSound("wrong");
+      return;
+    }
+
+    selectedTasks.push(task);
+  }
+
+  renderTaskLibrary();
+  updatePlanner();
+}
+
+function updatePlanner() {
+  const container = document.getElementById("selected-tasks");
+  const empty = document.getElementById("empty-plan");
+
+  container.innerHTML = "";
+
+  const totalTime = selectedTasks.reduce(
+    (total, task) => total + task.duration,
+    0
+  );
+
+  document.getElementById("plan-count").textContent =
+    selectedTasks.length + " مهام";
+
+  document.getElementById("plan-time").textContent =
+    formatDuration(totalTime);
+
+  const percent = Math.min(
+    100,
+    (totalTime / MAX_DAY_MINUTES) * 100
+  );
+
+  document.getElementById("plan-time-fill").style.width =
+    percent + "%";
+
+  const warning = document.getElementById("plan-warning");
+
+  warning.classList.remove("warning");
+
+  if (selectedTasks.length === 0) {
+    warning.textContent =
+      "اختار المهام اللي حابب تنجزها النهارده.";
+  } else if (totalTime > MAX_DAY_MINUTES) {
+    warning.textContent =
+      "الوقت أكتر من الوقت المتاح!";
+    warning.classList.add("warning");
+  } else {
+    warning.textContent =
+      "تمام! خطتك لسه في حدود الوقت المتاح. تقدر تعدلها في أي وقت.";
+  }
+
+  empty.classList.toggle(
+    "hidden",
+    selectedTasks.length !== 0
+  );
+
+  selectedTasks.forEach((task, index) => {
+    const item = document.createElement("div");
+
+    item.className = "selected-task";
+
+    item.innerHTML = `
+      <span class="selected-icon">${task.emoji}</span>
+
+      <span class="selected-info">
+        <strong>${task.name}</strong>
+        <small>${task.duration} دقيقة</small>
+      </span>
+
+      <div class="task-order-controls">
+
+        <button
+          class="order-button"
+          title="تحريك لأعلى"
+          ${index === 0 ? "disabled" : ""}
+        >↑</button>
+
+        <button
+          class="order-button"
+          title="تحريك لأسفل"
+          ${index === selectedTasks.length - 1 ? "disabled" : ""}
+        >↓</button>
+
+        <button
+          class="remove-button"
+          title="حذف المهمة"
+        >×</button>
+
+      </div>
+    `;
+
+    const buttons = item.querySelectorAll("button");
+
+    buttons[0].addEventListener("click", () => {
+      moveTask(index, -1);
+    });
+
+    buttons[1].addEventListener("click", () => {
+      moveTask(index, 1);
+    });
+
+    buttons[2].addEventListener("click", () => {
+      toggleTask(task.id);
+    });
+
+    container.appendChild(item);
+  });
+
+  document.getElementById("start-day-button").disabled =
+    selectedTasks.length === 0 ||
+    totalTime > MAX_DAY_MINUTES;
+}
+
+function moveTask(index, direction) {
+  playSound("click");
+
+  const newIndex = index + direction;
+
+  if (
+    newIndex < 0 ||
+    newIndex >= selectedTasks.length
+  ) {
+    return;
+  }
+
+  const temp = selectedTasks[index];
+
+  selectedTasks[index] =
+    selectedTasks[newIndex];
+
+  selectedTasks[newIndex] = temp;
+
+  updatePlanner();
+}
+
+
+/* =========================================
+   START DAY
+========================================= */
+
+function startDay() {
+  if (selectedTasks.length === 0) {
+    return;
+  }
+
   playSound("click");
   startMusic();
 
-  currentMission = 0;
-  totalScore = 0;
-  answered = false;
+  completedTasks = [];
 
-  document.getElementById("score").textContent = "0";
+  currentTaskIndex = 0;
 
-  renderMission();
-  showScreen("game-screen");
-}
+  totalStars = 0;
+  energy = 100;
 
+  currentMinutes = 8 * 60;
+  totalGameMinutes = 0;
 
-/* ======================================
-   RENDER MISSION
-   ====================================== */
+  eventPending = false;
+  currentEvent = null;
 
-function renderMission() {
-  answered = false;
+  taskElapsed = 0;
+  eventCount = 0;
 
-  const mission = missions[currentMission];
+  eventQueue = [];
 
-  document.getElementById("mission-number").textContent =
-    "MISSION " + String(currentMission + 1).padStart(2, "0");
+  const totalTasks = selectedTasks.length;
 
-  document.getElementById("mission-count-footer").textContent =
-    (currentMission + 1) + " / 5";
-
-  document.getElementById("progress-bar").style.width =
-    ((currentMission + 1) / missions.length * 100) + "%";
-
-  document.getElementById("mission-emoji").textContent =
-    mission.emoji;
-
-  document.getElementById("mission-title").textContent =
-    mission.title;
-
-  document.getElementById("mission-description").textContent =
-    mission.description;
-
-  document.getElementById("question").textContent =
-    mission.question;
-
-  document.getElementById("score").textContent =
-    totalScore;
-
-  const choices = document.getElementById("choices");
-  choices.innerHTML = "";
-
-  document.getElementById("feedback").classList.add("hidden");
-  document.getElementById("next-button").classList.add("hidden");
-
-  const letters = ["A", "B", "C", "D"];
-
-  mission.options.forEach((option, index) => {
-    const button = document.createElement("button");
-
-    button.className = "choice-button";
-
-    button.innerHTML =
-      '<span class="choice-letter">' + letters[index] + '</span>' +
-      '<span class="choice-text"></span>';
-
-    button.querySelector(".choice-text").textContent = option.text;
-
-    button.addEventListener("click", () => {
-      chooseAnswer(index);
+  if (totalTasks >= 2) {
+    eventQueue.push({
+      id: "message",
+      threshold: 2
     });
+  }
 
-    choices.appendChild(button);
-  });
+  if (totalTasks >= 4) {
+    eventQueue.push({
+      id: "help",
+      threshold: 4
+    });
+  }
+
+  if (totalTasks >= 6) {
+    eventQueue.push({
+      id: "distraction",
+      threshold: 6
+    });
+  }
+
+  updateEnergy();
+  renderDayTasks();
+
+  updateDayProgress();
+
+  showScreen("play-screen");
+
+  loadCurrentTask();
 }
 
 
-/* ======================================
-   ANSWER
-   ====================================== */
+/* =========================================
+   TASK RENDERING
+========================================= */
 
-function chooseAnswer(index) {
-  if (answered) return;
+function loadCurrentTask() {
+  stopTaskTimer();
 
-  answered = true;
+  taskElapsed = 0;
+
+  if (currentTaskIndex >= selectedTasks.length) {
+    finishDay();
+    return;
+  }
+
+  const task = selectedTasks[currentTaskIndex];
+
+  document.getElementById("current-task-emoji").textContent =
+    task.emoji;
+
+  document.getElementById("current-task-name").textContent =
+    task.name;
+
+  document.getElementById("current-task-description").textContent =
+    task.description;
+
+  document.getElementById("current-task-duration").textContent =
+    task.duration + " دقيقة";
+
+  document.getElementById("task-progress-bar").style.width =
+    "0%";
+
+  document.getElementById("task-progress-text").textContent =
+    "جاهز؟ اضغط وابدأ!";
+
+  document.getElementById("task-action-button").classList.remove("hidden");
+
+  document.getElementById("pause-button").classList.add("hidden");
+  document.getElementById("resume-button").classList.add("hidden");
+
+  document.getElementById("task-action-button").disabled = false;
+
+  document.getElementById("character-message").textContent =
+    "يلا نبدأ! كل مهمة بتقربك من نهاية يومك.";
+
+  renderDayTasks();
+
+  updateClock();
+  updateDayProgress();
+
+  showScreen("play-screen");
+}
+
+function renderDayTasks() {
+  const container = document.getElementById("day-task-list");
+
+  container.innerHTML = "";
+
+  selectedTasks.forEach((task, index) => {
+    const item = document.createElement("div");
+
+    item.className = "day-task-item";
+
+    if (index < currentTaskIndex) {
+      item.classList.add("done");
+    } else if (index === currentTaskIndex) {
+      item.classList.add("current");
+    }
+
+    const status =
+      index < currentTaskIndex
+        ? "✓ خلصت"
+        : index === currentTaskIndex
+        ? "⏳ جاري"
+        : "⌛ بعدين";
+
+    item.innerHTML = `
+      <span class="task-list-icon">${task.emoji}</span>
+
+      <span class="task-list-info">
+        <strong>${task.name}</strong>
+        <small>${task.duration} دقيقة</small>
+      </span>
+
+      <span class="task-list-status">${status}</span>
+    `;
+
+    container.appendChild(item);
+  });
+
+  document.getElementById("day-task-counter").textContent =
+    currentTaskIndex + " / " + selectedTasks.length;
+
+  document.getElementById("game-stars").textContent =
+    totalStars;
+}
+
+
+/* =========================================
+   TASK EXECUTION
+========================================= */
+
+function beginTask() {
+  if (taskRunning) return;
 
   playSound("click");
 
-  const mission = missions[currentMission];
-  const selected = mission.options[index];
+  taskRunning = true;
 
-  totalScore += selected.points;
+  document.getElementById("task-action-button").classList.add("hidden");
 
-  document.getElementById("score").textContent =
-    totalScore;
+  document.getElementById("pause-button").classList.remove("hidden");
+  document.getElementById("resume-button").classList.add("hidden");
 
-  const buttons = document.querySelectorAll(".choice-button");
+  document.getElementById("character-message").textContent =
+    "ركز.. أنت تقدر تخلص المهمة دي! 💪";
 
-  buttons.forEach((button, i) => {
-    button.disabled = true;
+  const task = selectedTasks[currentTaskIndex];
 
-    if (i === index) {
-      button.classList.add(selected.type);
+  taskTimer = setInterval(() => {
+    taskElapsed++;
+
+    const percent = Math.min(
+      100,
+      (taskElapsed / task.duration) * 100
+    );
+
+    document.getElementById("task-progress-bar").style.width =
+      percent + "%";
+
+    document.getElementById("task-progress-text").textContent =
+      Math.round(percent) + "% خلصت المهمة";
+
+    if (taskElapsed >= task.duration) {
+      completeTask();
     }
-  });
+  }, SIMULATION_SPEED);
+}
 
-  if (selected.type === "correct") {
-    playSound("correct");
-  } else {
-    playSound("wrong");
+function pauseTask() {
+  if (!taskRunning) return;
+
+  playSound("click");
+
+  stopTaskTimer();
+
+  document.getElementById("pause-button").classList.add("hidden");
+  document.getElementById("resume-button").classList.remove("hidden");
+
+  document.getElementById("task-progress-text").textContent =
+    "المهمة متوقفة مؤقتًا.";
+
+  document.getElementById("character-message").textContent =
+    "خد وقتك.. لما تكون جاهز كمل!";
+}
+
+function resumeTask() {
+  playSound("click");
+
+  beginTask();
+}
+
+function stopTaskTimer() {
+  if (taskTimer) {
+    clearInterval(taskTimer);
+    taskTimer = null;
   }
 
-  showFeedback(selected);
+  taskRunning = false;
+}
 
-  document.getElementById("next-button").classList.remove("hidden");
+function completeTask() {
+  stopTaskTimer();
 
-  document.getElementById("next-button").textContent =
-    currentMission === missions.length - 1
-      ? "SEE MY RESULTS →"
-      : "NEXT MISSION →";
+  const task = selectedTasks[currentTaskIndex];
+
+  taskElapsed = task.duration;
+
+  document.getElementById("task-progress-bar").style.width =
+    "100%";
+
+  document.getElementById("task-progress-text").textContent =
+    "المهمة خلصت! 🎉";
+
+  currentMinutes += task.duration;
+  totalGameMinutes += task.duration;
+
+  energy += task.energy;
+  energy = Math.max(0, Math.min(100, energy));
+
+  totalStars += task.stars;
+
+  completedTasks.push(task);
+
+  document.getElementById("task-action-button").classList.add("hidden");
+  document.getElementById("pause-button").classList.add("hidden");
+  document.getElementById("resume-button").classList.add("hidden");
+
+  document.getElementById("character-message").textContent =
+    task.message;
+
+  playSound("correct");
+
+  updateClock();
+  updateEnergy();
+
+  currentTaskIndex++;
+
+  renderDayTasks();
+  updateDayProgress();
+
+  checkEvents();
 }
 
 
-/* ======================================
-   FEEDBACK
-   ====================================== */
+/* =========================================
+   EVENT CHECK
+========================================= */
 
-function showFeedback(selected) {
-  const feedback = document.getElementById("feedback");
-  const icon = document.getElementById("feedback-icon");
-  const title = document.getElementById("feedback-title");
-  const text = document.getElementById("feedback-text");
+function checkEvents() {
+  if (eventQueue.length === 0) {
+    loadCurrentTask();
+    return;
+  }
 
-  feedback.classList.remove(
-    "hidden",
-    "correct-feedback",
-    "partial-feedback",
-    "wrong-feedback"
+  const nextEvent = eventQueue[0];
+
+  if (completedTasks.length < nextEvent.threshold) {
+    loadCurrentTask();
+    return;
+  }
+
+  eventQueue.shift();
+
+  currentEvent = gameEvents.find(
+    event => event.id === nextEvent.id
   );
 
-  if (selected.type === "correct") {
-    feedback.classList.add("correct-feedback");
-    icon.textContent = "🎉";
-    title.textContent = "EXCELLENT CHOICE! +" + selected.points;
-  } else if (selected.type === "partial") {
-    feedback.classList.add("partial-feedback");
-    icon.textContent = "🤔";
-    title.textContent = "NOT BAD! +" + selected.points;
-  } else {
-    feedback.classList.add("wrong-feedback");
-    icon.textContent = "💡";
-    title.textContent = "THINK AGAIN NEXT TIME! +0";
+  if (!currentEvent) {
+    loadCurrentTask();
+    return;
   }
 
-  text.textContent = selected.feedback;
+  eventPending = true;
+
+  renderEvent();
+
+  showScreen("event-screen");
 }
 
 
-/* ======================================
-   NEXT MISSION
-   ====================================== */
+/* =========================================
+   EVENT DISPLAY
+========================================= */
 
-function nextMission() {
+function renderEvent() {
+  if (!currentEvent) return;
+
+  playSound("wrong");
+
+  document.getElementById("event-title").textContent =
+    currentEvent.title;
+
+  document.querySelector(".event-burst").textContent =
+    currentEvent.emoji;
+
+  document.getElementById("event-description").textContent =
+    currentEvent.description;
+
+  const container = document.getElementById("event-options");
+
+  container.innerHTML = "";
+
+  currentEvent.options.forEach(option => {
+    const button = document.createElement("button");
+
+    button.className = "event-option";
+    button.type = "button";
+
+    button.innerHTML = `
+      <strong>${option.text}</strong>
+      <small>${option.description}</small>
+    `;
+
+    button.addEventListener("click", () => {
+      chooseEvent(option);
+    });
+
+    container.appendChild(button);
+  });
+}
+
+
+/* =========================================
+   EVENT RESPONSE
+========================================= */
+
+function chooseEvent(option) {
   playSound("click");
 
-  currentMission++;
+  currentMinutes += option.time;
+  totalGameMinutes += option.time;
 
-  if (currentMission < missions.length) {
-    renderMission();
+  energy += option.energy;
+
+  energy = Math.max(0, Math.min(100, energy));
+
+  totalStars += option.stars;
+
+  eventCount++;
+
+  updateClock();
+  updateEnergy();
+
+  document.getElementById("game-stars").textContent =
+    totalStars;
+
+  document.getElementById("character-message").textContent =
+    option.message;
+
+  eventPending = false;
+
+  currentEvent = null;
+
+  renderDayTasks();
+  updateDayProgress();
+
+  loadCurrentTask();
+}
+
+
+/* =========================================
+   CLOCK
+========================================= */
+
+function formatTime(minutes) {
+  const hour = Math.floor(minutes / 60);
+  const minute = minutes % 60;
+
+  const displayHour = hour % 12 || 12;
+
+  const period = hour >= 12 ? "مساءً" : "صباحًا";
+
+  return displayHour + ":" +
+    String(minute).padStart(2, "0") +
+    " " + period;
+}
+
+function formatDuration(minutes) {
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+
+  if (hours === 0) {
+    return mins + " دقيقة";
+  }
+
+  if (mins === 0) {
+    return hours + " ساعة";
+  }
+
+  return hours + " ساعة و " + mins + " دقيقة";
+}
+
+function updateClock() {
+  document.getElementById("current-time").textContent =
+    formatTime(currentMinutes);
+}
+
+
+/* =========================================
+   ENERGY
+========================================= */
+
+function updateEnergy() {
+  energy = Math.max(0, Math.min(100, energy));
+
+  const bar = document.getElementById("energy-bar");
+
+  bar.style.width = energy + "%";
+
+  document.getElementById("energy-label").textContent =
+    energy + "%";
+
+  if (energy >= 60) {
+    bar.style.background = "var(--green)";
+  } else if (energy >= 30) {
+    bar.style.background = "var(--yellow)";
   } else {
-    showResult();
+    bar.style.background = "var(--red)";
+  }
+
+  const character = document.getElementById("player-character");
+
+  if (energy >= 75) {
+    character.textContent = "😎";
+  } else if (energy >= 45) {
+    character.textContent = "🙂";
+  } else if (energy >= 20) {
+    character.textContent = "😮‍💨";
+  } else {
+    character.textContent = "🥱";
   }
 }
 
 
-/* ======================================
-   RESULTS
-   ====================================== */
+/* =========================================
+   PROGRESS
+========================================= */
 
-function showResult() {
+function updateDayProgress() {
+  const progress =
+    selectedTasks.length === 0
+      ? 0
+      : (currentTaskIndex / selectedTasks.length) * 100;
+
+  document.getElementById("day-progress").style.width =
+    progress + "%";
+
+  document.getElementById("game-stars").textContent =
+    totalStars;
+}
+
+
+/* =========================================
+   FINISH DAY
+========================================= */
+
+function finishDay() {
+  stopTaskTimer();
+
   stopMusic();
 
   showScreen("result-screen");
 
   playSound("victory");
 
-  document.getElementById("final-score").textContent =
-    totalScore;
+  const completed = completedTasks.length;
 
-  const title = document.getElementById("result-title");
-  const badge = document.getElementById("result-badge");
-  const message = document.getElementById("result-message");
-  const emoji = document.getElementById("result-emoji");
+  const total = selectedTasks.length;
 
-  if (totalScore >= 80) {
-    title.textContent = "TIME MASTER!";
-    badge.textContent = "🏆 TIME MASTER";
-    emoji.textContent = "🏆";
-    message.textContent =
-      "Amazing! You made smart choices, prioritized your tasks, and protected your time. Keep building these habits!";
-  } else if (totalScore >= 50) {
-    title.textContent = "TIME EXPLORER!";
-    badge.textContent = "🚀 TIME EXPLORER";
-    emoji.textContent = "🚀";
-    message.textContent =
-      "Good job! You are learning how to make better time choices. Keep practicing and your skills will grow!";
+  const percent = total === 0
+    ? 0
+    : Math.round((completed / total) * 100);
+
+  document.getElementById("stat-completed").textContent =
+    completed + " / " + total;
+
+  document.getElementById("stat-time").textContent =
+    totalGameMinutes;
+
+  document.getElementById("stat-energy").textContent =
+    energy + "%";
+
+  document.getElementById("stat-events").textContent =
+    eventCount;
+
+  document.getElementById("result-stars").textContent =
+    "⭐ " + totalStars;
+
+  document.getElementById("result-title").textContent =
+    percent >= 100
+      ? "يومك اتنقذ! 🎉"
+      : "وصلت لنهاية اليوم!";
+
+  document.getElementById("result-emoji").textContent =
+    percent >= 100
+      ? "🏆"
+      : percent >= 50
+      ? "🚀"
+      : "🌟";
+
+  document.getElementById("result-badge").textContent =
+    percent >= 100
+      ? "DAY MASTER"
+      : percent >= 50
+      ? "TIME EXPLORER"
+      : "DAY STARTER";
+
+  let message;
+
+  if (percent >= 100 && energy >= 50) {
+    message =
+      "يا سلام! خلصت كل المهام اللي اخترتها، وقدرت تحافظ على طاقتك بشكل كويس. ده يوم متوازن!";
+  } else if (percent >= 100) {
+    message =
+      "قدرت تخلص كل المهام اللي اخترتها! بس خلي بالك إن الطاقة جزء مهم من يومك، ومحتاج تسيب لنفسك مساحة للراحة.";
+  } else if (percent >= 50) {
+    message =
+      "أنجزت جزء كبير من خطتك! مش لازم كل حاجة تخلص في يوم واحد. المهم إنك عرفت تتحرك وتتعامل مع يومك.";
   } else {
-    title.textContent = "TIME STARTER!";
-    badge.textContent = "🌟 TIME STARTER";
-    emoji.textContent = "🌟";
-    message.textContent =
-      "Every journey starts somewhere! You have the power to improve your choices and take control of your day.";
+    message =
+      "وصلت لنهاية اليوم ودي بداية كويسة! كل يوم ممكن تتعلم تختار وتخطط بطريقة أحسن.";
   }
 
-  if (totalScore >= 50) {
+  document.getElementById("result-message").textContent =
+    message;
+
+  let insight;
+
+  if (energy >= 70) {
+    insight =
+      "طاقتك كويسة! حاول تحافظ على التوازن بين إنجاز المهام والراحة.";
+  } else if (energy >= 35) {
+    insight =
+      "طاقة متوسطة.. المرة الجاية فكر في ترتيب المهام وتوزيع المجهود.";
+  } else {
+    insight =
+      "طاقتك محتاجة اهتمام! الإنجاز مهم، لكن الراحة والنوم مش رفاهية.";
+  }
+
+  document.querySelector("#result-insight p").textContent =
+    insight;
+
+  if (totalStars >= 50) {
     launchConfetti();
   }
 }
 
 
-/* ======================================
+/* =========================================
    CONFETTI
-   ====================================== */
+========================================= */
 
 function launchConfetti() {
   const container = document.getElementById("confetti-container");
 
+  container.innerHTML = "";
+
   const pieces = 100;
 
   const colors = [
-    "#42e8e0",
-    "#b66cff",
-    "#ff5eae",
-    "#ff9e45",
-    "#f6d65c",
-    "#53e6a1"
+    "#8b5cf6",
+    "#15bfc6",
+    "#f36aa6",
+    "#ff9b42",
+    "#f5c94f",
+    "#22b987"
   ];
 
   for (let i = 0; i < pieces; i++) {
@@ -562,12 +1274,15 @@ function launchConfetti() {
     piece.className = "confetti";
 
     piece.style.left = Math.random() * 100 + "%";
-    piece.style.background = colors[
-      Math.floor(Math.random() * colors.length)
-    ];
 
-    piece.style.animationDelay = Math.random() * 1.5 + "s";
-    piece.style.animationDuration = (2 + Math.random() * 2) + "s";
+    piece.style.background =
+      colors[Math.floor(Math.random() * colors.length)];
+
+    piece.style.animationDelay =
+      Math.random() * 1.5 + "s";
+
+    piece.style.animationDuration =
+      (2 + Math.random() * 2) + "s";
 
     container.appendChild(piece);
   }
@@ -578,11 +1293,10 @@ function launchConfetti() {
 }
 
 
-/* ======================================
-   RESTART
-   ====================================== */
+/* =========================================
+   INIT
+========================================= */
 
-function restartGame() {
-  playSound("click");
-  startGame();
-}
+document.addEventListener("DOMContentLoaded", () => {
+  updatePlanner();
+});
